@@ -1,6 +1,0 @@
-{
-  "name": "AguaCION",
-  "description": "Red cartográfica ciudadana 100% offline para garantizar acceso inmediato a agua potable segura ante emergencias y desastres.",
-  "requestFramePermissions": ["geolocation"],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
