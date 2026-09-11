@@ -40,6 +40,8 @@ dependencies:
   shared_preferences: ^2.5.5
   share_plus: ^13.3.0
   lucide_icons_flutter: ^3.1.19
+  maplibre_gl: ^0.27.1
+  path_provider: ^2.1.6
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +64,15 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Assets for offline maps and routing POC
+  assets:
+    - assets/poc/maps/
+    - assets/poc/routing/
+    - assets/poc/data/
+    - assets/poc/styles/
+    - assets/poc/fonts/Noto Sans Regular/
+    - assets/poc/fonts/Noto Sans Bold/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

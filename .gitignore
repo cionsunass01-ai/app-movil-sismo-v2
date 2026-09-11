@@ -43,3 +43,43 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Xcode user and transient workspace files
+*.xcuserdatad/
+xcuserdata/
+*.xcscmblueprint
+!**/xcshareddata/swiftpm/Package.resolved
+
+# Heavy offline runtime assets (held pending Git LFS / external release strategy)
+assets/poc/maps/lima_callao_z14.pmtiles
+assets/poc/routing/pedestrian_graph_lima_csr.bin
+assets/poc/routing/pedestrian_graph_lima_csr.bin.gz
+
+# Spike raw OSM extracts and binary tools
+tools/offline_map_spike/bin/
+tools/offline_map_spike/raw/
+tools/offline_map_spike/*.pmtiles
+tools/offline_routing_spike/raw/
+
+# Spike intermediate generated graphs and debug databases
+tools/offline_routing_spike/pedestrian_graph_lima.db
+tools/offline_routing_spike/pedestrian_graph_lima.json
+tools/offline_routing_spike/pedestrian_graph_lima.json.gz
+tools/offline_routing_spike/pedestrian_graph_lima.bin
+tools/offline_routing_spike/pedestrian_graph_lima.bin.gz
+tools/offline_routing_spike/pedestrian_graph_lima_csr.bin
+tools/offline_routing_spike/pedestrian_graph_lima_csr.bin.gz
+
+# Raw external GIS archives (data audit)
+tools/data_audit/*.gpkg
+tools/data_audit/*.rar
+
+# Institutional unapproved datasets & raw sources (PENDING_INSTITUTIONAL_APPROVAL)
+tools/data_audit/raw/
+tools/data_audit/*.geojson
+docs/data-audit/*.csv
+docs/data-audit/*.json
+assets/poc/data/water_points_normalized.json
+tools/offline_routing_spike/unconnected_25_points.json
+tools/offline_routing_spike/water_point_access_audit_full.json
+docs/offline-architecture/WATER_POINT_ACCESS_AUDIT.csv
