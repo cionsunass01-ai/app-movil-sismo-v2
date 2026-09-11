@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../core/constants/app_colors.dart';
 import '../providers/app_state_provider.dart';
+import '../../poc/offline_navigation/presentation/offline_navigation_poc_page.dart';
 
 class HeaderBar extends StatelessWidget {
   const HeaderBar({super.key});
@@ -16,7 +17,11 @@ class HeaderBar extends StatelessWidget {
         gradient: LinearGradient(
           colors: state.isEmergency
               ? [AppColors.slate950, AppColors.deepRed, AppColors.slate900]
-              : [AppColors.sunassDarkNavy, AppColors.sunassNavy, const Color(0xFF004B87)],
+              : [
+                  AppColors.sunassDarkNavy,
+                  AppColors.sunassNavy,
+                  const Color(0xFF004B87),
+                ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -78,7 +83,9 @@ class HeaderBar extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.w900,
-                                color: state.isEmergency ? AppColors.primaryRed : AppColors.sunassCyan,
+                                color: state.isEmergency
+                                    ? AppColors.primaryRed
+                                    : AppColors.sunassCyan,
                                 letterSpacing: -0.5,
                               ),
                             ),
@@ -101,18 +108,71 @@ class HeaderBar extends StatelessWidget {
               // Status Badges & Quick Action Buttons
               Row(
                 children: [
+                  // POC Offline Navigation launch badge
+                  InkWell(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const OfflineNavigationPocPage(),
+                      ),
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3.5,
+                      ),
+                      margin: const EdgeInsets.only(right: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.amberAccent.withValues(alpha: 0.6),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            LucideIcons.map,
+                            color: Colors.amberAccent,
+                            size: 12,
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            'POC OFFLINE',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
                   // SUNASS regulatory official badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3.5,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.sunassCyan.withValues(alpha: 0.4)),
+                      border: Border.all(
+                        color: AppColors.sunassCyan.withValues(alpha: 0.4),
+                      ),
                     ),
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(LucideIcons.shieldCheck, color: Color(0xFF38BDF8), size: 12),
+                        Icon(
+                          LucideIcons.shieldCheck,
+                          color: Color(0xFF38BDF8),
+                          size: 12,
+                        ),
                         SizedBox(width: 4),
                         Text(
                           'SUNASS',
@@ -163,7 +223,9 @@ class GesturefulLocationPill extends StatelessWidget {
               children: [
                 Icon(
                   LucideIcons.locateFixed,
-                  color: state.isEmergency ? const Color(0xFFF87171) : AppColors.sunassCyan,
+                  color: state.isEmergency
+                      ? const Color(0xFFF87171)
+                      : AppColors.sunassCyan,
                   size: 15,
                 ),
                 const SizedBox(width: 8),
@@ -202,7 +264,9 @@ class GesturefulLocationPill extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 9,
                   fontWeight: FontWeight.w800,
-                  color: state.isEmergency ? const Color(0xFFFCA5A5) : const Color(0xFFE0F2FE),
+                  color: state.isEmergency
+                      ? const Color(0xFFFCA5A5)
+                      : const Color(0xFFE0F2FE),
                   fontFamily: 'monospace',
                 ),
               ),

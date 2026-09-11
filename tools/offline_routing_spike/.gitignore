@@ -1,0 +1,9 @@
+*.osm.*
+pedestrian_graph_lima.json
+pedestrian_graph_lima.json.gz
+pedestrian_graph_lima.bin
+pedestrian_graph_lima.bin.gz
+pedestrian_graph_lima_csr.bin
+pedestrian_graph_lima_csr.bin.gz
+*.db
+raw/
