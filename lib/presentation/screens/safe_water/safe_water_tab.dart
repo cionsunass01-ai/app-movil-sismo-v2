@@ -63,6 +63,52 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 28),
       children: [
+        // ================= SECTION 0: INSTITUTIONAL GUIDANCE BANNER =================
+        Container(
+          padding: const EdgeInsets.all(14),
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: AppColors.softBlue,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.borderBlue),
+          ),
+          child: const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(LucideIcons.shieldAlert, color: AppColors.sunassNavy, size: 18),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Recomendaciones para el uso y desinfección del agua',
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.sunassNavy,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 6),
+              Text(
+                'Consulta indicaciones oficiales vigentes de MINSA/DIGESA.',
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.slate700,
+                ),
+              ),
+              SizedBox(height: 3),
+              Text(
+                'Los cálculos de esta sección son estimaciones referenciales de emergencia (estándar Esfera). Ante cualquier duda, priorice las indicaciones de las autoridades sanitarias.',
+                style: TextStyle(fontSize: 10.5, color: AppColors.slate600),
+              ),
+            ],
+          ),
+        ),
+
         // ================= SECTION 1: FAMILY RESERVE CALCULATOR =================
         Container(
           padding: const EdgeInsets.all(16),

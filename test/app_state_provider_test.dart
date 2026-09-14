@@ -10,13 +10,14 @@ void main() {
       SharedPreferences.setMockInitialValues({});
     });
 
-    test('Initial state is correct and has points loaded', () {
+    test('Initial state is correct and loads canonical points', () async {
       final provider = AppStateProvider();
+      await provider.loadCatalog();
       expect(provider.isEmergency, false);
       expect(provider.isOnline, true);
-      expect(provider.activeTab, AppTab.puntos);
+      expect(provider.activeTab, AppTab.inicio);
       expect(provider.points.isNotEmpty, true);
-      expect(provider.sectors.isNotEmpty, true);
+      expect(provider.currentSectorData.n, 'Pendiente de integración');
     });
 
     test('toggleEmergency flips isEmergency state', () {
@@ -32,15 +33,15 @@ void main() {
       expect(provider.isOnline, false);
 
       await provider.submitReport(
-        puntoId: 'MOQ-PE-003',
-        puntoNombre: 'Parque Mariscal Nieto',
+        puntoId: 'PTO-001',
+        puntoNombre: 'Punto de Prueba',
         tipoProblema: 'Sin agua',
         comentario: 'Test comentario',
-        sector: 'Cercado de Moquegua',
+        sector: 'Lima',
       );
 
       expect(provider.queuedReports.length, 1);
-      expect(provider.queuedReports.first.puntoNombre, 'Parque Mariscal Nieto');
+      expect(provider.queuedReports.first.puntoNombre, 'Punto de Prueba');
 
       // Now return online and sync
       await provider.toggleOnline();

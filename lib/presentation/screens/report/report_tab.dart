@@ -91,7 +91,7 @@ class _ReportTabState extends State<ReportTab> {
                       ),
                       const SizedBox(height: 2),
                       const Text(
-                        'Se sincronizarán automáticamente con SUNASS y el COE EPS apenas vuelva la señal.',
+                        'Flujo de reporte en demostración. La persistencia y sincronización productiva se implementarán en una fase posterior.',
                         style: TextStyle(
                           fontSize: 10.5,
                           color: AppColors.darkAmber,
@@ -150,7 +150,7 @@ class _ReportTabState extends State<ReportTab> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Alerta Ciudadana en Tiempo Real',
+                        'Reporte de Incidencia (En desarrollo)',
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
@@ -158,7 +158,7 @@ class _ReportTabState extends State<ReportTab> {
                         ),
                       ),
                       Text(
-                        'Reporta incidencias para redistribución del COE EPS',
+                        'Prototipo técnico: almacenamiento local de incidencias',
                         style: TextStyle(
                           fontSize: 10,
                           color: AppColors.slate500,
@@ -299,7 +299,7 @@ class _ReportTabState extends State<ReportTab> {
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Garantía de funcionamiento offline: El reporte se georreferencia con tu GPS nativo y queda almacenado de forma segura en tu teléfono hasta tener cobertura.',
+                        'Flujo de reporte en demostración. La persistencia y sincronización productiva se implementarán en una fase posterior.',
                         style: TextStyle(
                           fontSize: 10,
                           color: Color(0xFF0369A1),

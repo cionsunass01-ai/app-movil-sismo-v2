@@ -5,15 +5,10 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/geo_utils.dart';
 import '../../../data/models/water_point.dart';
 import '../../providers/app_state_provider.dart';
+import '../../widgets/operational_chips.dart';
 import 'point_detail_sheet.dart';
 
-enum FilterType {
-  all,
-  conAgua,
-  cisterna,
-  pileta,
-  surtidor,
-}
+enum PointFilterType { all, cisterna, pileta, surtidor }
 
 class PointsTab extends StatefulWidget {
   const PointsTab({super.key});
@@ -24,7 +19,7 @@ class PointsTab extends StatefulWidget {
 
 class _PointsTabState extends State<PointsTab> {
   String _searchTerm = '';
-  FilterType _filter = FilterType.all;
+  PointFilterType _filter = PointFilterType.all;
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -33,9 +28,10 @@ class _PointsTabState extends State<PointsTab> {
     super.dispose();
   }
 
-  List<WaterPoint> _filterPoints(List<WaterPoint> points, bool isEmergency) {
+  List<WaterPoint> _filterPoints(List<WaterPoint> points) {
     return points.where((p) {
-      final matchesSearch = p.n.toLowerCase().contains(_searchTerm.toLowerCase()) ||
+      final matchesSearch =
+          p.n.toLowerCase().contains(_searchTerm.toLowerCase()) ||
           p.sector.toLowerCase().contains(_searchTerm.toLowerCase()) ||
           p.ref.toLowerCase().contains(_searchTerm.toLowerCase()) ||
           p.tipo.label.toLowerCase().contains(_searchTerm.toLowerCase());
@@ -43,15 +39,13 @@ class _PointsTabState extends State<PointsTab> {
       if (!matchesSearch) return false;
 
       switch (_filter) {
-        case FilterType.all:
+        case PointFilterType.all:
           return true;
-        case FilterType.conAgua:
-          return isEmergency ? p.estE == EmergencyStatus.ok : true;
-        case FilterType.cisterna:
+        case PointFilterType.cisterna:
           return p.tipo == PointType.cisterna;
-        case FilterType.pileta:
+        case PointFilterType.pileta:
           return p.tipo == PointType.pileta;
-        case FilterType.surtidor:
+        case PointFilterType.surtidor:
           return p.tipo == PointType.surtidor || p.tipo == PointType.pozo;
       }
     }).toList();
@@ -60,95 +54,125 @@ class _PointsTabState extends State<PointsTab> {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppStateProvider>();
+
+    // If catalog is explicitly unavailable
+    if (state.catalogStatus == CatalogStatus.unavailable) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(LucideIcons.databaseZap,
+                  size: 44, color: AppColors.warningAmber),
+              const SizedBox(height: 14),
+              const Text(
+                'Catálogo local no disponible en esta instalación.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.slate800,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'El archivo local de puntos oficiales de Lima y Callao no fue detectado en el dispositivo.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12.5, color: AppColors.slate600),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () => state.loadCatalog(),
+                icon: const Icon(LucideIcons.refreshCw, size: 16),
+                label: const Text('Reintentar'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     final allPoints = state.points;
-    final filteredPoints = _filterPoints(allPoints, state.isEmergency);
+    final filteredPoints = _filterPoints(allPoints);
+
+    // Limit display to top 20 nearest when not searching, or show all filtered
+    final displayPoints = _searchTerm.isEmpty && _filter == PointFilterType.all
+        ? filteredPoints.take(20).toList()
+        : filteredPoints;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 24),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 28),
       children: [
-        // Sismo Stat Card
+        // Demo Simulation Banner if emergency mode is active
         if (state.isEmergency) ...[
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.slate200),
+              color: AppColors.softAmber,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.borderAmber),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: const Row(
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '${state.activePointsCount} ',
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w900,
-                              color: AppColors.slate900,
-                            ),
-                          ),
-                          TextSpan(
-                            text: 'de ${allPoints.length} puntos',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.slate500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      'Puntos con agua activa ahora mismo en la ciudad',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: AppColors.slate600,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+                Icon(
+                  LucideIcons.flaskConical,
+                  size: 16,
+                  color: AppColors.darkAmber,
                 ),
-                Container(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    color: AppColors.softGreen,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Center(
-                    child: Icon(LucideIcons.droplet, color: AppColors.safeGreen, size: 20),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'MODO DEMOSTRACIÓN: La disponibilidad operativa mostrada es simulada para evaluación institucional.',
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.darkAmber,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
         ],
 
-        // Search bar
+        // Search Bar
         Container(
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: AppColors.slate200),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: TextField(
             controller: _searchController,
             onChanged: (val) => setState(() => _searchTerm = val),
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
             decoration: InputDecoration(
-              hintText: 'Buscar parque, sector, cisterna...',
-              hintStyle: const TextStyle(fontSize: 12, color: AppColors.slate400),
-              prefixIcon: const Icon(LucideIcons.search, size: 16, color: AppColors.slate400),
+              hintText: 'Buscar distrito, parque o punto...',
+              hintStyle: const TextStyle(
+                fontSize: 13,
+                color: AppColors.slate400,
+              ),
+              prefixIcon: const Icon(
+                LucideIcons.search,
+                size: 18,
+                color: AppColors.slate400,
+              ),
               suffixIcon: _searchTerm.isNotEmpty
                   ? IconButton(
-                      icon: const Icon(LucideIcons.x, size: 16, color: AppColors.slate500),
+                      icon: const Icon(
+                        LucideIcons.x,
+                        size: 16,
+                        color: AppColors.slate500,
+                      ),
                       onPressed: () {
                         _searchController.clear();
                         setState(() => _searchTerm = '');
@@ -156,109 +180,116 @@ class _PointsTabState extends State<PointsTab> {
                     )
                   : null,
               border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 14,
+                horizontal: 14,
+              ),
             ),
           ),
         ),
 
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
 
-        // Filter chips bar
+        // Type Filter Chips Bar
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
               _FilterChip(
                 label: 'Todos (${allPoints.length})',
-                isSelected: _filter == FilterType.all,
-                onTap: () => setState(() => _filter = FilterType.all),
+                isSelected: _filter == PointFilterType.all,
+                onTap: () => setState(() => _filter = PointFilterType.all),
               ),
-              const SizedBox(width: 6),
-              _FilterChip(
-                label: 'Con agua (${state.activePointsCount})',
-                isSelected: _filter == FilterType.conAgua,
-                isHighlight: true,
-                onTap: () => setState(() => _filter = FilterType.conAgua),
-              ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 8),
               _FilterChip(
                 label: 'Cisternas',
-                isSelected: _filter == FilterType.cisterna,
-                onTap: () => setState(() => _filter = FilterType.cisterna),
+                isSelected: _filter == PointFilterType.cisterna,
+                onTap: () => setState(() => _filter = PointFilterType.cisterna),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 8),
               _FilterChip(
                 label: 'Piletas',
-                isSelected: _filter == FilterType.pileta,
-                onTap: () => setState(() => _filter = FilterType.pileta),
+                isSelected: _filter == PointFilterType.pileta,
+                onTap: () => setState(() => _filter = PointFilterType.pileta),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 8),
               _FilterChip(
                 label: 'Pozos / PTAP',
-                isSelected: _filter == FilterType.surtidor,
-                onTap: () => setState(() => _filter = FilterType.surtidor),
+                isSelected: _filter == PointFilterType.surtidor,
+                onTap: () => setState(() => _filter = PointFilterType.surtidor),
               ),
             ],
           ),
         ),
 
-        const SizedBox(height: 12),
+        const SizedBox(height: 14),
 
-        // Subheader
+        // Results summary header
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'ORDENADOS POR CERCANÍA A TU UBICACIÓN',
-              style: TextStyle(
-                fontSize: 9.5,
-                fontWeight: FontWeight.w800,
-                color: AppColors.slate500,
-                letterSpacing: 0.3,
+            const Expanded(
+              child: Text(
+                'PUNTOS DE ABASTECIMIENTO',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.slate500,
+                  letterSpacing: 0.5,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
-            Text(
-              '${filteredPoints.length} resultados',
-              style: const TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                color: AppColors.slate500,
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                _searchTerm.isEmpty && _filter == PointFilterType.all
+                    ? '${displayPoints.length} más cercanos (${allPoints.length} reg.)'
+                    : '${filteredPoints.length} encontrados',
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.slate500,
+                ),
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.end,
               ),
             ),
           ],
         ),
 
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
 
-        // List of point cards
-        if (filteredPoints.isEmpty)
+        // Point cards list
+        if (displayPoints.isEmpty)
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
             alignment: Alignment.center,
             child: const Column(
               children: [
-                Icon(LucideIcons.searchX, color: AppColors.slate400, size: 36),
-                SizedBox(height: 10),
+                Icon(LucideIcons.searchX, color: AppColors.slate400, size: 40),
+                SizedBox(height: 12),
                 Text(
                   'No se encontraron puntos de agua',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.slate700),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.slate700,
+                  ),
                 ),
                 SizedBox(height: 4),
                 Text(
-                  'Intenta cambiar los filtros o el término de búsqueda.',
-                  style: TextStyle(fontSize: 11, color: AppColors.slate500),
+                  'Intenta cambiar el texto de búsqueda o el tipo de punto.',
+                  style: TextStyle(fontSize: 12, color: AppColors.slate500),
                   textAlign: TextAlign.center,
                 ),
               ],
             ),
           )
         else
-          ...filteredPoints.map((point) {
+          ...displayPoints.map((point) {
             return _PointCard(
               point: point,
-              isEmergency: state.isEmergency,
               onTap: () {
                 state.selectPoint(point);
                 PointDetailSheet.show(
@@ -267,6 +298,9 @@ class _PointsTabState extends State<PointsTab> {
                   isEmergency: state.isEmergency,
                   onReportTapped: () => state.setActiveTab(AppTab.reportar),
                 );
+              },
+              onViewOnMap: () {
+                state.selectPointAndNavigateToMap(point);
               },
             );
           }),
@@ -278,50 +312,44 @@ class _PointsTabState extends State<PointsTab> {
 class _FilterChip extends StatelessWidget {
   final String label;
   final bool isSelected;
-  final bool isHighlight;
   final VoidCallback onTap;
 
   const _FilterChip({
     required this.label,
     required this.isSelected,
-    this.isHighlight = false,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    Color bg = AppColors.white;
-    Color border = AppColors.slate200;
-    Color text = AppColors.slate600;
-
-    if (isSelected) {
-      if (isHighlight) {
-        bg = AppColors.safeGreen;
-        border = AppColors.safeGreen;
-        text = AppColors.white;
-      } else {
-        bg = AppColors.slate900;
-        border = AppColors.slate900;
-        text = AppColors.white;
-      }
-    }
-
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(
-          color: bg,
+          color: isSelected ? AppColors.sunassBlue : AppColors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: border),
+          border: Border.all(
+            color: isSelected ? AppColors.sunassBlue : AppColors.slate200,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppColors.sunassBlue.withValues(alpha: 0.25),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
         ),
         child: Text(
           label,
           style: TextStyle(
-            fontSize: 10.5,
+            fontSize: 12,
             fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-            color: text,
+            color: isSelected ? AppColors.white : AppColors.slate700,
           ),
         ),
       ),
@@ -331,27 +359,60 @@ class _FilterChip extends StatelessWidget {
 
 class _PointCard extends StatelessWidget {
   final WaterPoint point;
-  final bool isEmergency;
   final VoidCallback onTap;
+  final VoidCallback onViewOnMap;
 
   const _PointCard({
     required this.point,
-    required this.isEmergency,
     required this.onTap,
+    required this.onViewOnMap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final dist = point.distMeters ?? 0;
-    final formattedDist = GeoUtils.formatDistance(dist);
-    final walkTime = GeoUtils.formatWalkingTime(dist);
+    final dist = point.distMeters;
+    final bool isApproximate = point.isDistanceApproximate;
+
+    final String distLabel;
+    final String timeLabel;
+
+    if (dist == null) {
+      distLabel = '--';
+      timeLabel = 'Sin ubicación';
+    } else if (isApproximate) {
+      // Honest geodetic approximation: NEVER claim walking time
+      if (dist >= 1000) {
+        distLabel = '~${(dist / 1000).toStringAsFixed(1)} km';
+      } else {
+        distLabel = '~$dist m';
+      }
+      timeLabel = 'Distancia aprox.';
+    } else {
+      // Exact routed pedestrian distance and time
+      distLabel = GeoUtils.formatDistance(dist);
+      timeLabel = GeoUtils.formatWalkingTime(dist);
+    }
+
+    final typeLabel = switch (point.tipo) {
+      PointType.cisterna => 'CISTERNA',
+      PointType.pileta => 'PILETA',
+      PointType.surtidor => 'SURTIDOR',
+      PointType.pozo => 'POZO',
+    };
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.slate200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Material(
         color: Colors.transparent,
@@ -359,11 +420,11 @@ class _PointCard extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Top Row: Type, Sector, Distance Badge
+                // Top Row: Type tag & Distance badge
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -374,59 +435,69 @@ class _PointCard extends StatelessWidget {
                           Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
                                 decoration: BoxDecoration(
                                   color: AppColors.slate100,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
-                                  point.tipo.label.toUpperCase(),
+                                  typeLabel,
                                   style: const TextStyle(
-                                    fontSize: 8.5,
+                                    fontSize: 9.5,
                                     fontWeight: FontWeight.w800,
                                     color: AppColors.slate700,
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 6),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   point.sector,
                                   style: const TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 11,
                                     color: AppColors.slate500,
                                     fontWeight: FontWeight.w600,
                                   ),
+                                  maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 6),
                           Text(
                             point.n,
                             style: const TextStyle(
-                              fontSize: 13.5,
+                              fontSize: 15,
                               fontWeight: FontWeight.w800,
                               color: AppColors.slate900,
                               letterSpacing: -0.2,
                             ),
                           ),
-                          const SizedBox(height: 1),
-                          Text(
-                            point.ref,
-                            style: const TextStyle(
-                              fontSize: 10.5,
-                              color: AppColors.slate500,
+                          if (point.ref.isNotEmpty) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              point.ref,
+                              style: const TextStyle(
+                                fontSize: 11.5,
+                                color: AppColors.slate600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                          ],
                         ],
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 10),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.slate50,
                         borderRadius: BorderRadius.circular(10),
@@ -436,20 +507,21 @@ class _PointCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            formattedDist,
+                            distLabel,
                             style: const TextStyle(
-                              fontSize: 12,
+                              fontSize: 13,
                               fontWeight: FontWeight.w900,
                               color: AppColors.slate900,
-                              fontFamily: 'monospace',
                             ),
                           ),
                           Text(
-                            walkTime,
-                            style: const TextStyle(
-                              fontSize: 8.5,
+                            timeLabel,
+                            style: TextStyle(
+                              fontSize: 9.5,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.slate500,
+                              color: isApproximate
+                                  ? AppColors.slate500
+                                  : AppColors.darkGreen,
                             ),
                           ),
                         ],
@@ -458,28 +530,54 @@ class _PointCard extends StatelessWidget {
                   ],
                 ),
 
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 const Divider(color: AppColors.slate100, height: 1),
-                const SizedBox(height: 6),
+                const SizedBox(height: 10),
 
-                // Bottom strip: status badge & verification date
+                // Bottom strip: Honest operational chips + View on Map button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _CardStatusBadge(point: point, isEmergency: isEmergency),
-                    Row(
-                      children: [
-                        Text(
-                          'Verificado: ${point.ver}',
-                          style: TextStyle(
-                            fontSize: 9.5,
-                            color: point.verMeses > 6 ? AppColors.darkAmber : AppColors.slate500,
-                            fontWeight: FontWeight.w600,
+                    const Expanded(
+                      child: Wrap(
+                        spacing: 6,
+                        runSpacing: 4,
+                        children: [
+                          OperationalStatusChip(
+                            statusText: 'Estado no confirmado',
                           ),
+                          SourceChip(sourceLabel: 'Catálogo local'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    InkWell(
+                      onTap: onViewOnMap,
+                      borderRadius: BorderRadius.circular(6),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 4,
                         ),
-                        const SizedBox(width: 2),
-                        const Icon(LucideIcons.chevronRight, size: 12, color: AppColors.slate400),
-                      ],
+                        child: Row(
+                          children: [
+                            Text(
+                              'Ver en mapa',
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.sunassBlue,
+                              ),
+                            ),
+                            SizedBox(width: 2),
+                            Icon(
+                              LucideIcons.chevronRight,
+                              size: 14,
+                              color: AppColors.sunassBlue,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -487,95 +585,6 @@ class _PointCard extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _CardStatusBadge extends StatelessWidget {
-  final WaterPoint point;
-  final bool isEmergency;
-
-  const _CardStatusBadge({required this.point, required this.isEmergency});
-
-  @override
-  Widget build(BuildContext context) {
-    if (!isEmergency) {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        decoration: BoxDecoration(
-          color: AppColors.softBlue,
-          borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: AppColors.borderBlue),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(LucideIcons.checkCircle2, color: AppColors.accentBlue, size: 10),
-            const SizedBox(width: 4),
-            Text(
-              point.estN,
-              style: const TextStyle(
-                color: Color(0xFF1E40AF),
-                fontSize: 9.5,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    final isSafe = point.estE == EmergencyStatus.ok;
-    final isWarn = point.estE == EmergencyStatus.warn;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: isSafe
-            ? AppColors.softGreen
-            : isWarn
-                ? AppColors.softAmber
-                : AppColors.softRed,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: isSafe
-              ? AppColors.borderGreen
-              : isWarn
-                  ? AppColors.borderAmber
-                  : AppColors.borderRed,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            isSafe
-                ? LucideIcons.droplet
-                : isWarn
-                    ? LucideIcons.alertTriangle
-                    : LucideIcons.alertTriangle,
-            color: isSafe
-                ? AppColors.safeGreen
-                : isWarn
-                    ? AppColors.warningAmber
-                    : AppColors.primaryRed,
-            size: 10,
-          ),
-          const SizedBox(width: 4),
-          Text(
-            point.estETxt,
-            style: TextStyle(
-              color: isSafe
-                  ? AppColors.darkGreen
-                  : isWarn
-                      ? AppColors.darkAmber
-                      : AppColors.darkRed,
-              fontSize: 9.5,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ],
       ),
     );
   }

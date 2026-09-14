@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../../core/constants/app_colors.dart';
-import '../providers/app_state_provider.dart';
-import '../../poc/offline_navigation/presentation/offline_navigation_poc_page.dart';
+import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+import "package:lucide_icons_flutter/lucide_icons.dart";
+import "../../core/constants/app_colors.dart";
+import "../providers/app_state_provider.dart";
+import "demo_tools_modal.dart";
 
 class HeaderBar extends StatelessWidget {
   const HeaderBar({super.key});
@@ -11,268 +11,177 @@ class HeaderBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppStateProvider>();
+    final isOnline = state.isOnline;
 
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: state.isEmergency
-              ? [AppColors.slate950, AppColors.deepRed, AppColors.slate900]
-              : [
-                  AppColors.sunassDarkNavy,
-                  AppColors.sunassNavy,
-                  const Color(0xFF004B87),
-                ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: AppColors.sunassDarkNavy,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
-      child: Column(
-        children: [
-          // Top Row: Brand & Toggles
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Brand Logo & Title
-              Row(
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppColors.sunassCyan, AppColors.sunassBlue],
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.sunassCyan.withValues(alpha: 0.4),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        LucideIcons.droplet,
-                        color: AppColors.white,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            const TextSpan(
-                              text: 'Agua',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w900,
-                                color: AppColors.white,
-                                letterSpacing: -0.5,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'CION',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w900,
-                                color: state.isEmergency
-                                    ? AppColors.primaryRed
-                                    : AppColors.sunassCyan,
-                                letterSpacing: -0.5,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Text(
-                        'SUNASS • Red de Agua Segura',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Color(0xFFBAE6FD),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-
-              // Status Badges & Quick Action Buttons
-              Row(
-                children: [
-                  // POC Offline Navigation launch badge
-                  InkWell(
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const OfflineNavigationPocPage(),
-                      ),
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 3.5,
-                      ),
-                      margin: const EdgeInsets.only(right: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: SafeArea(
+        bottom: false,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Left: Logo & Brand Title
+            Expanded(
+              child: InkWell(
+                onLongPress: () => DemoToolsModal.show(context),
+                borderRadius: BorderRadius.circular(8),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 32,
+                      height: 32,
                       decoration: BoxDecoration(
-                        color: Colors.amber.withValues(alpha: 0.25),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.amberAccent.withValues(alpha: 0.6),
+                        color: AppColors.sunassBlue,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          LucideIcons.droplet,
+                          color: AppColors.white,
+                          size: 18,
                         ),
                       ),
-                      child: const Row(
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            LucideIcons.map,
-                            color: Colors.amberAccent,
-                            size: 12,
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Flexible(
+                                child: Text(
+                                  "AguaCION",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                    color: AppColors.white,
+                                    letterSpacing: -0.3,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 1.5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.white.withValues(
+                                    alpha: 0.15,
+                                  ),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: const Text(
+                                  "SUNASS",
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFF7DD3FC),
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(width: 4),
-                          Text(
-                            'POC OFFLINE',
+                          const Text(
+                            "Agua y orientación en emergencias",
                             style: TextStyle(
-                              color: AppColors.white,
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 0.3,
+                              color: Color(0xFFBAE6FD),
+                              fontWeight: FontWeight.w500,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
                     ),
-                  ),
-
-                  // SUNASS regulatory official badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3.5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.white.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: AppColors.sunassCyan.withValues(alpha: 0.4),
-                      ),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          LucideIcons.shieldCheck,
-                          color: Color(0xFF38BDF8),
-                          size: 12,
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          'SUNASS',
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 0.3,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 10),
-
-          // User Current Location & GPS bar
-          GesturefulLocationPill(state: state),
-        ],
-      ),
-    );
-  }
-}
-
-class GesturefulLocationPill extends StatelessWidget {
-  final AppStateProvider state;
-
-  const GesturefulLocationPill({super.key, required this.state});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                Icon(
-                  LucideIcons.locateFixed,
-                  color: state.isEmergency
-                      ? const Color(0xFFF87171)
-                      : AppColors.sunassCyan,
-                  size: 15,
+                  ],
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Cerca de: ${state.userLocation.nombre}',
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: AppColors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(width: 8),
+
+            // Right: Connectivity Status indicator & Discrete Demo tools trigger
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 9,
+                    vertical: 4,
                   ),
+                  decoration: BoxDecoration(
+                    color: isOnline
+                        ? const Color(0xFF065F46).withValues(alpha: 0.6)
+                        : const Color(0xFF1E293B),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: isOnline
+                          ? const Color(0xFF10B981).withValues(alpha: 0.5)
+                          : AppColors.slate700,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: isOnline
+                              ? AppColors.safeGreen
+                              : AppColors.warningAmber,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        isOnline ? "En Línea" : "Modo Local",
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: isOnline
+                              ? const Color(0xFFA7F3D0)
+                              : AppColors.slate300,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 4),
+                IconButton(
+                  icon: const Icon(
+                    LucideIcons.slidersHorizontal,
+                    size: 16,
+                    color: Color(0xFF94A3B8),
+                  ),
+                  tooltip: "Opciones de Demostración",
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(
+                    minWidth: 32,
+                    minHeight: 32,
+                  ),
+                  onPressed: () => DemoToolsModal.show(context),
                 ),
               ],
             ),
-          ),
-          InkWell(
-            onTap: () => state.requestLiveGps(),
-            borderRadius: BorderRadius.circular(6),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2.5),
-              decoration: BoxDecoration(
-                color: state.isEmergency
-                    ? AppColors.primaryRed.withValues(alpha: 0.35)
-                    : AppColors.sunassCyan.withValues(alpha: 0.25),
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(
-                  color: state.isEmergency
-                      ? AppColors.primaryRed.withValues(alpha: 0.5)
-                      : AppColors.sunassCyan.withValues(alpha: 0.5),
-                ),
-              ),
-              child: Text(
-                state.isLiveGps ? 'GPS EN VIVO' : 'GPS OK',
-                style: TextStyle(
-                  fontSize: 9,
-                  fontWeight: FontWeight.w800,
-                  color: state.isEmergency
-                      ? const Color(0xFFFCA5A5)
-                      : const Color(0xFFE0F2FE),
-                  fontFamily: 'monospace',
-                ),
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

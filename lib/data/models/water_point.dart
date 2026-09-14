@@ -71,6 +71,7 @@ class WaterPoint {
   final String estETxt; // Emergency status text
   final String estN; // Normal status text
   final int? distMeters; // Calculated distance in meters
+  final bool isDistanceApproximate; // True when distance is straight-line Haversine
 
   const WaterPoint({
     required this.id,
@@ -94,6 +95,7 @@ class WaterPoint {
     required this.estETxt,
     required this.estN,
     this.distMeters,
+    this.isDistanceApproximate = true,
   });
 
   WaterPoint copyWith({
@@ -118,6 +120,7 @@ class WaterPoint {
     String? estETxt,
     String? estN,
     int? distMeters,
+    bool? isDistanceApproximate,
   }) {
     return WaterPoint(
       id: id ?? this.id,
@@ -141,6 +144,7 @@ class WaterPoint {
       estETxt: estETxt ?? this.estETxt,
       estN: estN ?? this.estN,
       distMeters: distMeters ?? this.distMeters,
+      isDistanceApproximate: isDistanceApproximate ?? this.isDistanceApproximate,
     );
   }
 
@@ -167,6 +171,7 @@ class WaterPoint {
       'estETxt': estETxt,
       'estN': estN,
       'distMeters': distMeters,
+      'isDistanceApproximate': isDistanceApproximate,
     };
   }
 
@@ -193,6 +198,61 @@ class WaterPoint {
       estETxt: json['estETxt'] as String,
       estN: json['estN'] as String,
       distMeters: json['distMeters'] != null ? (json['distMeters'] as num).toInt() : null,
+      isDistanceApproximate: json['isDistanceApproximate'] as bool? ?? true,
+    );
+  }
+
+  /// Constructs a domain WaterPoint directly from a record in `water_points_normalized.json`
+  factory WaterPoint.fromNormalizedJson(Map<String, dynamic> json) {
+    final rawType = (json['component_type_normalized'] ?? json['component_type_raw'] ?? '')
+        .toString()
+        .toUpperCase();
+    final PointType type = switch (rawType) {
+      'POZO' => PointType.pozo,
+      'CISTERNA' => PointType.cisterna,
+      'PILETA' => PointType.pileta,
+      'SURTIDOR' => PointType.surtidor,
+      _ => PointType.cisterna,
+    };
+
+    final String district = json['district']?.toString() ?? 'LIMA';
+    final String locationDesc = json['location_description']?.toString() ?? '';
+    final String officialCode = json['official_code']?.toString() ?? '';
+    final String pointId = json['water_point_id']?.toString() ?? '';
+
+    final String displayName = locationDesc.isNotEmpty
+        ? locationDesc
+        : (officialCode.isNotEmpty ? 'Punto $officialCode' : 'Punto $pointId');
+
+    final String reference = officialCode.isNotEmpty
+        ? 'Código: $officialCode · ${json['eomr'] ?? ''}'
+        : (json['eomr']?.toString() ?? '');
+
+    final dynamic capVal = json['capacity'];
+    final String capStr = capVal != null ? '$capVal m³' : 'Capacidad referencial';
+
+    return WaterPoint(
+      id: pointId,
+      n: displayName,
+      ref: reference,
+      lat: (json['latitude'] as num).toDouble(),
+      lon: (json['longitude'] as num).toDouble(),
+      tipo: type,
+      sector: district,
+      pobl: 0,
+      cap: capStr,
+      recarga: json['eomr']?.toString() ?? 'SEDAPAL',
+      horario: 'Sujeto a programación de contingencia',
+      calidad: WaterQuality.apta,
+      acceso: 'Vía peatonal / vehicular',
+      pend: 'Normal',
+      resp: json['source_authority']?.toString() ?? 'SEDAPAL',
+      ver: json['valid_from']?.toString() ?? '2026-08-19',
+      verMeses: 1,
+      estE: EmergencyStatus.ok,
+      estETxt: 'Estado no confirmado',
+      estN: 'Catálogo local',
+      isDistanceApproximate: true,
     );
   }
 }

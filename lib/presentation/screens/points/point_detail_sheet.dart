@@ -48,7 +48,7 @@ class PointDetailSheet extends StatelessWidget {
     SharePlus.instance.share(
       ShareParams(
         text: text,
-        subject: 'Punto de Agua Segura - ${point.n}',
+        subject: 'Punto de Abastecimiento - ${point.n}',
       ),
     );
   }
@@ -222,14 +222,14 @@ class PointDetailSheet extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(height: 2),
-                                Text(
-                                  'Hervir a borbotones por 1 minuto o desinfectar con lejía en la pestaña Agua Segura antes de beber.',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: AppColors.darkAmber,
-                                    height: 1.3,
+                                  Text(
+                                    'Consulta las indicaciones oficiales vigentes de MINSA/DIGESA para el uso y desinfección del agua antes de beber.',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: AppColors.darkAmber,
+                                      height: 1.3,
+                                    ),
                                   ),
-                                ),
                               ],
                             ),
                           ),
