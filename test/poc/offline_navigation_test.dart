@@ -16,7 +16,7 @@ void main() {
 
     setUpAll(() async {
       final binFile = File(
-        'tools/offline_routing_spike/pedestrian_graph_lima_csr.bin',
+        'assets/poc/routing/pedestrian_graph_lima_csr.bin',
       );
       expect(
         binFile.existsSync(),

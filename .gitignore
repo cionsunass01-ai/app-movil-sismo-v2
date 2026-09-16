@@ -83,3 +83,8 @@ assets/poc/data/water_points_normalized.json
 tools/offline_routing_spike/unconnected_25_points.json
 tools/offline_routing_spike/water_point_access_audit_full.json
 docs/offline-architecture/WATER_POINT_ACCESS_AUDIT.csv
+
+# Canonical offline runtime assets authorized for private team development
+!assets/poc/data/water_points_normalized.json
+!assets/poc/maps/lima_callao_z14.pmtiles
+!assets/poc/routing/pedestrian_graph_lima_csr.bin
