@@ -12,8 +12,13 @@ import 'package:aguacion_app/presentation/screens/main_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'fakes/fake_connectivity_service.dart';
 
-Widget createSizedBoxApp(Widget child, Size size, {AppStateProvider? customProvider}) {
-  final provider = customProvider ??
+Widget createSizedBoxApp(
+  Widget child,
+  Size size, {
+  AppStateProvider? customProvider,
+}) {
+  final provider =
+      customProvider ??
       AppStateProvider(connectivityService: FakeConnectivityService());
   return ChangeNotifierProvider<AppStateProvider>.value(
     value: provider,
@@ -73,7 +78,13 @@ void main() {
           final provider = AppStateProvider();
           await provider.loadCatalog();
 
-          await tester.pumpWidget(createSizedBoxApp(const PointsTab(), size, customProvider: provider));
+          await tester.pumpWidget(
+            createSizedBoxApp(
+              const PointsTab(),
+              size,
+              customProvider: provider,
+            ),
+          );
           await tester.pumpAndSettle();
 
           expect(tester.takeException(), isNull);

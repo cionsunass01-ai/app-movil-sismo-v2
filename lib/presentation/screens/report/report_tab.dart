@@ -75,7 +75,11 @@ class _ReportTabState extends State<ReportTab> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(LucideIcons.hourglass, color: AppColors.warningAmber, size: 18),
+                const Icon(
+                  LucideIcons.hourglass,
+                  color: AppColors.warningAmber,
+                  size: 18,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
@@ -106,10 +110,21 @@ class _ReportTabState extends State<ReportTab> {
                     style: FilledButton.styleFrom(
                       backgroundColor: AppColors.warningAmber,
                       foregroundColor: AppColors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                    child: const Text('Sincronizar', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800)),
+                    child: const Text(
+                      'Sincronizar',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ),
               ],
             ),
@@ -141,7 +156,9 @@ class _ReportTabState extends State<ReportTab> {
                       child: Icon(
                         LucideIcons.send,
                         size: 16,
-                        color: isOnline ? AppColors.sunassBlue : AppColors.primaryRed,
+                        color: isOnline
+                            ? AppColors.sunassBlue
+                            : AppColors.primaryRed,
                       ),
                     ),
                   ),
@@ -174,7 +191,11 @@ class _ReportTabState extends State<ReportTab> {
               // Target Point Selector
               const Text(
                 'PUNTO O ZONA AFECTADA:',
-                style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: AppColors.slate600),
+                style: TextStyle(
+                  fontSize: 9.5,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.slate600,
+                ),
               ),
               const SizedBox(height: 6),
               Container(
@@ -188,11 +209,18 @@ class _ReportTabState extends State<ReportTab> {
                   child: DropdownButton<String>(
                     value: _selectedPointId,
                     isExpanded: true,
-                    style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: AppColors.slate900),
+                    style: const TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.slate900,
+                    ),
                     items: points.map((p) {
                       return DropdownMenuItem(
                         value: p.id,
-                        child: Text('${p.n} (${p.sector})', overflow: TextOverflow.ellipsis),
+                        child: Text(
+                          '${p.n} (${p.sector})',
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       );
                     }).toList(),
                     onChanged: (val) {
@@ -207,7 +235,11 @@ class _ReportTabState extends State<ReportTab> {
               // Issue Type Selector
               const Text(
                 'INCIDENCIA DETECTADA:',
-                style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: AppColors.slate600),
+                style: TextStyle(
+                  fontSize: 9.5,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.slate600,
+                ),
               ),
               const SizedBox(height: 6),
               Container(
@@ -221,7 +253,11 @@ class _ReportTabState extends State<ReportTab> {
                   child: DropdownButton<String>(
                     value: _selectedIssue,
                     isExpanded: true,
-                    style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: AppColors.slate900),
+                    style: const TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.slate900,
+                    ),
                     items: _issueOptions.map((issue) {
                       return DropdownMenuItem(
                         value: issue,
@@ -240,7 +276,11 @@ class _ReportTabState extends State<ReportTab> {
               // Additional Comment Field
               const Text(
                 'DETALLE ADICIONAL (OPCIONAL):',
-                style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: AppColors.slate600),
+                style: TextStyle(
+                  fontSize: 9.5,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.slate600,
+                ),
               ),
               const SizedBox(height: 6),
               TextField(
@@ -248,8 +288,12 @@ class _ReportTabState extends State<ReportTab> {
                 maxLines: 3,
                 style: const TextStyle(fontSize: 12),
                 decoration: InputDecoration(
-                  hintText: 'Ej: Colas de 50 personas, cisterna no aparece desde las 08:00...',
-                  hintStyle: const TextStyle(fontSize: 11, color: AppColors.slate400),
+                  hintText:
+                      'Ej: Colas de 50 personas, cisterna no aparece desde las 08:00...',
+                  hintStyle: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.slate400,
+                  ),
                   filled: true,
                   fillColor: AppColors.slate50,
                   border: OutlineInputBorder(
@@ -272,12 +316,19 @@ class _ReportTabState extends State<ReportTab> {
                     isOnline
                         ? 'Transmitir reporte a SUNASS y EPS'
                         : 'Guardar reporte localmente (Sin internet)',
-                    style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800),
+                    style: const TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                   style: FilledButton.styleFrom(
-                    backgroundColor: isOnline ? AppColors.sunassBlue : AppColors.primaryRed,
+                    backgroundColor: isOnline
+                        ? AppColors.sunassBlue
+                        : AppColors.primaryRed,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
@@ -295,7 +346,11 @@ class _ReportTabState extends State<ReportTab> {
                 child: const Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(LucideIcons.shieldCheck, color: AppColors.sunassCyan, size: 16),
+                    Icon(
+                      LucideIcons.shieldCheck,
+                      color: AppColors.sunassCyan,
+                      size: 16,
+                    ),
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(

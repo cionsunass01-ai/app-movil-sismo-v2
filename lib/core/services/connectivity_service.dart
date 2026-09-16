@@ -2,11 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-enum NetworkState {
-  connected,
-  disconnected,
-  unknown,
-}
+enum NetworkState { connected, disconnected, unknown }
 
 /// Service that monitors real physical network interface connectivity on the device.
 ///
@@ -21,7 +17,7 @@ class ConnectivityService {
   bool _isInitialized = false;
 
   ConnectivityService({Connectivity? connectivity})
-      : _connectivity = connectivity ?? Connectivity();
+    : _connectivity = connectivity ?? Connectivity();
 
   NetworkState get currentNetworkState => _currentState;
   bool get isConnected => _currentState == NetworkState.connected;
@@ -67,12 +63,14 @@ class ConnectivityService {
       return NetworkState.disconnected;
     }
 
-    final hasActiveInterface = results.any((r) =>
-        r == ConnectivityResult.wifi ||
-        r == ConnectivityResult.mobile ||
-        r == ConnectivityResult.ethernet ||
-        r == ConnectivityResult.vpn ||
-        r == ConnectivityResult.other);
+    final hasActiveInterface = results.any(
+      (r) =>
+          r == ConnectivityResult.wifi ||
+          r == ConnectivityResult.mobile ||
+          r == ConnectivityResult.ethernet ||
+          r == ConnectivityResult.vpn ||
+          r == ConnectivityResult.other,
+    );
 
     return hasActiveInterface
         ? NetworkState.connected

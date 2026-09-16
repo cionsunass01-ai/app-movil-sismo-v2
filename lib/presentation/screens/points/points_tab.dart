@@ -63,8 +63,11 @@ class _PointsTabState extends State<PointsTab> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(LucideIcons.databaseZap,
-                  size: 44, color: AppColors.warningAmber),
+              const Icon(
+                LucideIcons.databaseZap,
+                size: 44,
+                color: AppColors.warningAmber,
+              ),
               const SizedBox(height: 14),
               const Text(
                 'Catálogo local no disponible en esta instalación.',
@@ -390,7 +393,7 @@ class _PointCard extends StatelessWidget {
     } else {
       // Exact routed pedestrian distance and time
       distLabel = GeoUtils.formatDistance(dist);
-      timeLabel = GeoUtils.formatWalkingTime(dist);
+      timeLabel = '≈ ${GeoUtils.formatWalkingTime(dist)}';
     }
 
     final typeLabel = switch (point.tipo) {
@@ -398,6 +401,10 @@ class _PointCard extends StatelessWidget {
       PointType.pileta => 'PILETA',
       PointType.surtidor => 'SURTIDOR',
       PointType.pozo => 'POZO',
+      PointType.noEspecificado =>
+        point.componentTypeRaw != null && point.componentTypeRaw!.isNotEmpty
+            ? point.componentTypeRaw!.toUpperCase()
+            : 'NO ESPECIFICADO',
     };
 
     return Container(
@@ -434,21 +441,25 @@ class _PointCard extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.slate100,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  typeLabel,
-                                  style: const TextStyle(
-                                    fontSize: 9.5,
-                                    fontWeight: FontWeight.w800,
-                                    color: AppColors.slate700,
+                              Flexible(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.slate100,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    typeLabel,
+                                    style: const TextStyle(
+                                      fontSize: 9.5,
+                                      fontWeight: FontWeight.w800,
+                                      color: AppColors.slate700,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ),
@@ -538,15 +549,22 @@ class _PointCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Wrap(
                         spacing: 6,
                         runSpacing: 4,
                         children: [
                           OperationalStatusChip(
-                            statusText: 'Estado no confirmado',
+                            statusText: point.estETxt.isNotEmpty
+                                ? point.estETxt
+                                : 'Estado no confirmado',
+                            isConfirmed: point.estE == EmergencyStatus.ok,
                           ),
-                          SourceChip(sourceLabel: 'Catálogo local'),
+                          SourceChip(
+                            sourceLabel: point.estN.isNotEmpty
+                                ? point.estN
+                                : 'Catálogo local',
+                          ),
                         ],
                       ),
                     ),

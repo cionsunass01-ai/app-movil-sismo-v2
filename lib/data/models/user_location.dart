@@ -12,12 +12,7 @@ class UserLocation {
   });
 
   Map<String, dynamic> toJson() {
-    return {
-      'nombre': nombre,
-      'sector': sector,
-      'lat': lat,
-      'lon': lon,
-    };
+    return {'nombre': nombre, 'sector': sector, 'lat': lat, 'lon': lon};
   }
 
   factory UserLocation.fromJson(Map<String, dynamic> json) {

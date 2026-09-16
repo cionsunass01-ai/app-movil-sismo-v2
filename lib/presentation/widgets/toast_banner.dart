@@ -39,11 +39,7 @@ class ToastBanner extends StatelessWidget {
           ),
           InkWell(
             onTap: () => state.clearNotification(),
-            child: const Icon(
-              LucideIcons.x,
-              color: AppColors.white,
-              size: 14,
-            ),
+            child: const Icon(LucideIcons.x, color: AppColors.white, size: 14),
           ),
         ],
       ),

@@ -3,11 +3,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import '../models/water_point.dart';
 
-enum CatalogStatus {
-  uninitialized,
-  available,
-  unavailable,
-}
+enum CatalogStatus { uninitialized, available, unavailable }
 
 /// Canonical single source of truth for the local water point catalog.
 ///
@@ -16,7 +12,8 @@ enum CatalogStatus {
 /// [CatalogStatus.unavailable] and NO mock/legacy points are injected.
 class LocalWaterPointCatalogRepository {
   final AssetBundle _bundle;
-  static const String assetPath = 'assets/poc/data/water_points_normalized.json';
+  static const String assetPath =
+      'assets/poc/data/water_points_normalized.json';
 
   CatalogStatus _status = CatalogStatus.uninitialized;
   CatalogStatus get status => _status;
@@ -26,7 +23,7 @@ class LocalWaterPointCatalogRepository {
   List<WaterPoint> get cachedPoints => List.unmodifiable(_cachedPoints);
 
   LocalWaterPointCatalogRepository({AssetBundle? bundle})
-      : _bundle = bundle ?? rootBundle;
+    : _bundle = bundle ?? rootBundle;
 
   /// Loads the canonical catalog from offline storage.
   ///
@@ -66,10 +63,24 @@ class LocalWaterPointCatalogRepository {
         return [];
       }
 
-      _cachedPoints = records
-          .map((item) =>
-              WaterPoint.fromNormalizedJson(item as Map<String, dynamic>))
-          .toList();
+      final List<WaterPoint> points = [];
+      for (final item in records) {
+        if (item is Map<String, dynamic>) {
+          try {
+            points.add(WaterPoint.fromNormalizedJson(item));
+          } catch (_) {
+            // Omit invalid/corrupted records lacking valid coordinates
+          }
+        }
+      }
+
+      if (points.isEmpty) {
+        _status = CatalogStatus.unavailable;
+        _cachedPoints = [];
+        return [];
+      }
+
+      _cachedPoints = points;
       _status = CatalogStatus.available;
       return List.unmodifiable(_cachedPoints);
     } catch (_) {

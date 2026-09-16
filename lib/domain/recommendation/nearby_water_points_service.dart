@@ -11,7 +11,7 @@ class NearbyWaterPointsService {
   final OfflineRoutingEngine _routingEngine;
 
   NearbyWaterPointsService({OfflineRoutingEngine? routingEngine})
-      : _routingEngine = routingEngine ?? OfflineRoutingEngine.instance;
+    : _routingEngine = routingEngine ?? OfflineRoutingEngine.instance;
 
   /// Fast geodetic pre-filter using Haversine formula.
   ///
@@ -29,10 +29,7 @@ class NearbyWaterPointsService {
         p.lat,
         p.lon,
       );
-      return p.copyWith(
-        distMeters: dist,
-        isDistanceApproximate: true,
-      );
+      return p.copyWith(distMeters: dist, isDistanceApproximate: true);
     }).toList();
 
     list.sort((a, b) => (a.distMeters ?? 0).compareTo(b.distMeters ?? 0));
@@ -87,10 +84,12 @@ class NearbyWaterPointsService {
         );
 
         if (route != null && route.isSuccess) {
-          routedCandidates.add(point.copyWith(
-            distMeters: route.distanceMeters.round(),
-            isDistanceApproximate: false,
-          ));
+          routedCandidates.add(
+            point.copyWith(
+              distMeters: route.distanceMeters.round(),
+              isDistanceApproximate: false,
+            ),
+          );
         } else {
           // Route could not snap or find path within 50m; keep geodetic with approximate flag
           routedCandidates.add(point);
@@ -101,7 +100,9 @@ class NearbyWaterPointsService {
     }
 
     // 3. Sort routed candidates by their final distance
-    routedCandidates.sort((a, b) => (a.distMeters ?? 0).compareTo(b.distMeters ?? 0));
+    routedCandidates.sort(
+      (a, b) => (a.distMeters ?? 0).compareTo(b.distMeters ?? 0),
+    );
 
     // 4. Combine top routed candidates + remaining approximate points
     return [...routedCandidates, ...remaining];

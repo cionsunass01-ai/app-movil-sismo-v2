@@ -25,7 +25,8 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
 
   void _copyDisinfectionProtocol() {
     final double bleachMl =
-        (_volumeLiters * AppConstants.targetFreeChlorineMgL) / (_bleachConcPercent * 10);
+        (_volumeLiters * AppConstants.targetFreeChlorineMgL) /
+        (_bleachConcPercent * 10);
     final int drops = (bleachMl * AppConstants.dropsPerMl).round();
 
     final text =
@@ -53,11 +54,13 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
         ? AppConstants.sphereStandardLitersPerDay
         : AppConstants.survivalMinimumLitersPerDay;
     final double totalWaterNeeded = _persons * _days * quotaPerDay;
-    final int jugs20L = (totalWaterNeeded / AppConstants.standardJugCapacityLiters).ceil();
+    final int jugs20L =
+        (totalWaterNeeded / AppConstants.standardJugCapacityLiters).ceil();
 
     // Bleach calculations
     final double bleachMl =
-        (_volumeLiters * AppConstants.targetFreeChlorineMgL) / (_bleachConcPercent * 10);
+        (_volumeLiters * AppConstants.targetFreeChlorineMgL) /
+        (_bleachConcPercent * 10);
     final int bleachDrops = (bleachMl * AppConstants.dropsPerMl).round();
 
     return ListView(
@@ -77,7 +80,11 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
             children: [
               Row(
                 children: [
-                  Icon(LucideIcons.shieldAlert, color: AppColors.sunassNavy, size: 18),
+                  Icon(
+                    LucideIcons.shieldAlert,
+                    color: AppColors.sunassNavy,
+                    size: 18,
+                  ),
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -125,7 +132,11 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
                 children: [
                   const Row(
                     children: [
-                      Icon(LucideIcons.droplet, color: AppColors.accentBlue, size: 18),
+                      Icon(
+                        LucideIcons.droplet,
+                        color: AppColors.accentBlue,
+                        size: 18,
+                      ),
                       SizedBox(width: 8),
                       Text(
                         'Calculadora de Reserva Familiar',
@@ -138,7 +149,10 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.softBlue,
                       borderRadius: BorderRadius.circular(6),
@@ -306,7 +320,11 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
                 children: [
                   const Row(
                     children: [
-                      Icon(LucideIcons.shieldCheck, color: AppColors.safeGreen, size: 18),
+                      Icon(
+                        LucideIcons.shieldCheck,
+                        color: AppColors.safeGreen,
+                        size: 18,
+                      ),
                       SizedBox(width: 8),
                       Text(
                         'Desinfección Segura con Lejía',
@@ -319,7 +337,10 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.softGreen,
                       borderRadius: BorderRadius.circular(6),
@@ -344,7 +365,11 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
                 children: [
                   const Text(
                     'Volumen del recipiente:',
-                    style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: AppColors.slate800),
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.slate800,
+                    ),
                   ),
                   Text(
                     '${_volumeLiters.toInt()} Litros',
@@ -369,11 +394,30 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
               const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('1 L', style: TextStyle(fontSize: 9, color: AppColors.slate500)),
-                  Text('10 L', style: TextStyle(fontSize: 9, color: AppColors.slate500)),
-                  Text('20 L (Bidón)', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: AppColors.accentBlue)),
-                  Text('50 L', style: TextStyle(fontSize: 9, color: AppColors.slate500)),
-                  Text('100 L', style: TextStyle(fontSize: 9, color: AppColors.slate500)),
+                  Text(
+                    '1 L',
+                    style: TextStyle(fontSize: 9, color: AppColors.slate500),
+                  ),
+                  Text(
+                    '10 L',
+                    style: TextStyle(fontSize: 9, color: AppColors.slate500),
+                  ),
+                  Text(
+                    '20 L (Bidón)',
+                    style: TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.accentBlue,
+                    ),
+                  ),
+                  Text(
+                    '50 L',
+                    style: TextStyle(fontSize: 9, color: AppColors.slate500),
+                  ),
+                  Text(
+                    '100 L',
+                    style: TextStyle(fontSize: 9, color: AppColors.slate500),
+                  ),
                 ],
               ),
 
@@ -382,7 +426,11 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
               // Concentration Dropdown
               const Text(
                 'Concentración de la lejía comercial:',
-                style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: AppColors.slate800),
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.slate800,
+                ),
               ),
               const SizedBox(height: 6),
               Container(
@@ -404,7 +452,9 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
                     items: const [
                       DropdownMenuItem(
                         value: 5,
-                        child: Text('Lejía doméstica común al 5% (Recomendada)'),
+                        child: Text(
+                          'Lejía doméstica común al 5% (Recomendada)',
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 4,
@@ -457,7 +507,10 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
                                 children: [
                                   const TextSpan(
                                     text: 'Aproximadamente ',
-                                    style: TextStyle(fontSize: 11, color: Color(0xFFA7F3D0)),
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Color(0xFFA7F3D0),
+                                    ),
                                   ),
                                   TextSpan(
                                     text: '$bleachDrops gotas',
@@ -480,13 +533,21 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
                           ),
                           label: Text(
                             _isCopied ? '¡Copiado!' : 'Copiar',
-                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800),
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                            ),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.safeGreen,
                             foregroundColor: AppColors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 8,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                         ),
                       ],
@@ -569,7 +630,9 @@ class _StepperRow extends StatelessWidget {
                   padding: const EdgeInsets.all(6),
                   backgroundColor: AppColors.white,
                   side: const BorderSide(color: AppColors.slate300),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
               Container(
@@ -592,7 +655,9 @@ class _StepperRow extends StatelessWidget {
                   padding: const EdgeInsets.all(6),
                   backgroundColor: AppColors.white,
                   side: const BorderSide(color: AppColors.slate300),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
             ],
@@ -647,7 +712,9 @@ class _QuotaButton extends StatelessWidget {
               subtitle,
               style: TextStyle(
                 fontSize: 9.5,
-                color: isSelected ? AppColors.white.withValues(alpha: 0.8) : AppColors.slate500,
+                color: isSelected
+                    ? AppColors.white.withValues(alpha: 0.8)
+                    : AppColors.slate500,
               ),
             ),
           ],

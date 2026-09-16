@@ -4,11 +4,19 @@ import 'package:flutter/material.dart';
 /// Combined with Humanitarian Emergency & Safe Water Semantics
 class AppColors {
   // === SUNASS Institutional Core ===
-  static const Color sunassNavy = Color(0xFF003876); // Azul Institucional Profundo SUNASS
+  static const Color sunassNavy = Color(
+    0xFF003876,
+  ); // Azul Institucional Profundo SUNASS
   static const Color sunassBlue = Color(0xFF0056B3); // Azul Primario SUNASS
-  static const Color sunassCyan = Color(0xFF00A3E0); // Celeste Agua / Gota SUNASS
-  static const Color sunassLightCyan = Color(0xFFE0F2FE); // Celeste Claro de fondo (sky-100)
-  static const Color sunassDarkNavy = Color(0xFF002244); // Azul Marino Profundo (AppBar/Headers)
+  static const Color sunassCyan = Color(
+    0xFF00A3E0,
+  ); // Celeste Agua / Gota SUNASS
+  static const Color sunassLightCyan = Color(
+    0xFFE0F2FE,
+  ); // Celeste Claro de fondo (sky-100)
+  static const Color sunassDarkNavy = Color(
+    0xFF002244,
+  ); // Azul Marino Profundo (AppBar/Headers)
 
   // === Emergency & Seismic Alerts (Disaster Mode) ===
   static const Color primaryRed = Color(0xFFDC2626); // red-600

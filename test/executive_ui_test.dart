@@ -14,7 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'fakes/fake_connectivity_service.dart';
 
 Widget createTestApp(Widget child, {AppStateProvider? customProvider}) {
-  final provider = customProvider ??
+  final provider =
+      customProvider ??
       AppStateProvider(connectivityService: FakeConnectivityService());
   return ChangeNotifierProvider<AppStateProvider>.value(
     value: provider,

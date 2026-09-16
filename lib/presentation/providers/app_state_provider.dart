@@ -62,24 +62,27 @@ class AppStateProvider extends ChangeNotifier {
     ConnectivityService? connectivityService,
     LocalWaterPointCatalogRepository? catalogRepo,
     NearbyWaterPointsService? nearbyService,
-  })  : _connectivityService = connectivityService ?? ConnectivityService(),
-        _catalogRepo = catalogRepo ?? LocalWaterPointCatalogRepository(),
-        _nearbyService = nearbyService ?? NearbyWaterPointsService() {
+  }) : _connectivityService = connectivityService ?? ConnectivityService(),
+       _catalogRepo = catalogRepo ?? LocalWaterPointCatalogRepository(),
+       _nearbyService = nearbyService ?? NearbyWaterPointsService() {
     _realConnectivity = _connectivityService.currentNetworkState;
-    _connectivitySubscription =
-        _connectivityService.onConnectivityChanged.listen((state) {
-      if (_realConnectivity != state) {
-        final wasDisconnected = _realConnectivity == NetworkState.disconnected;
-        _realConnectivity = state;
-        if (!_isConnectivitySimulationEnabled) {
-          if (wasDisconnected && state == NetworkState.connected) {
-            syncQueuedReports();
+    _connectivitySubscription = _connectivityService.onConnectivityChanged
+        .listen((state) {
+          if (_realConnectivity != state) {
+            final wasDisconnected =
+                _realConnectivity == NetworkState.disconnected;
+            _realConnectivity = state;
+            if (!_isConnectivitySimulationEnabled) {
+              if (wasDisconnected && state == NetworkState.connected) {
+                syncQueuedReports();
+              }
+              _handleConnectivityChangeNotification(
+                state == NetworkState.connected,
+              );
+            }
+            notifyListeners();
           }
-          _handleConnectivityChangeNotification(state == NetworkState.connected);
-        }
-        notifyListeners();
-      }
-    });
+        });
     _init();
   }
 
@@ -128,13 +131,13 @@ class AppStateProvider extends ChangeNotifier {
   List<SectorData> get sectors => const [];
 
   SectorData get currentSectorData => const SectorData(
-        n: 'Pendiente de integración',
-        con: 0,
-        rac: 0,
-        hor: 'Sin programación oficial',
-        res: 'Por determinar',
-        puntosCount: 0,
-      );
+    n: 'Pendiente de integración',
+    con: 0,
+    rac: 0,
+    hor: 'Sin programación oficial',
+    res: 'Por determinar',
+    puntosCount: 0,
+  );
 
   WaterPoint? get nearestPoint => _points.isNotEmpty ? _points.first : null;
 
@@ -250,15 +253,15 @@ class AppStateProvider extends ChangeNotifier {
       // Asynchronously calculate candidate pedestrian routes for top 10
       _nearbyService
           .rankAndRouteNearest(
-        points: _points,
-        originLat: location.lat,
-        originLon: location.lon,
-        maxCandidatesToRoute: 10,
-      )
+            points: _points,
+            originLat: location.lat,
+            originLon: location.lon,
+            maxCandidatesToRoute: 10,
+          )
           .then((rankedAndRouted) {
-        _points = rankedAndRouted;
-        notifyListeners();
-      });
+            _points = rankedAndRouted;
+            notifyListeners();
+          });
     }
 
     notifyListeners();
@@ -293,7 +296,9 @@ class AppStateProvider extends ChangeNotifier {
     _isConnectivitySimulationEnabled = enabled;
     if (!enabled) {
       // Immediately revert to physical connectivity
-      _handleConnectivityChangeNotification(_realConnectivity == NetworkState.connected);
+      _handleConnectivityChangeNotification(
+        _realConnectivity == NetworkState.connected,
+      );
     } else {
       showNotification(
         _simulatedConnectivity == NetworkState.connected
@@ -316,13 +321,14 @@ class AppStateProvider extends ChangeNotifier {
   Future<void> toggleOnline() async {
     if (!_isConnectivitySimulationEnabled) {
       _isConnectivitySimulationEnabled = true;
-      _simulatedConnectivity =
-          isOnline ? NetworkState.disconnected : NetworkState.connected;
+      _simulatedConnectivity = isOnline
+          ? NetworkState.disconnected
+          : NetworkState.connected;
     } else {
       _simulatedConnectivity =
           (_simulatedConnectivity == NetworkState.connected)
-              ? NetworkState.disconnected
-              : NetworkState.connected;
+          ? NetworkState.disconnected
+          : NetworkState.connected;
     }
 
     AudioHapticService.triggerClick();

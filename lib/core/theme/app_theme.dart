@@ -34,9 +34,7 @@ class AppTheme {
           fontWeight: FontWeight.w600,
           color: AppColors.slate900,
         ),
-        bodyLarge: baseTextTheme.bodyLarge?.copyWith(
-          color: AppColors.slate800,
-        ),
+        bodyLarge: baseTextTheme.bodyLarge?.copyWith(color: AppColors.slate800),
         bodyMedium: baseTextTheme.bodyMedium?.copyWith(
           color: AppColors.slate600,
         ),
@@ -73,7 +71,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.primaryRed, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
       ),
     );
   }

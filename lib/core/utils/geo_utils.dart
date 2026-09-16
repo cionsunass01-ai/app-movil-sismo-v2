@@ -12,7 +12,8 @@ class GeoUtils {
     final double dLat = (lat2 - lat1) * (pi / 180.0);
     final double dLon = (lon2 - lon1) * (pi / 180.0);
 
-    final double a = sin(dLat / 2) * sin(dLat / 2) +
+    final double a =
+        sin(dLat / 2) * sin(dLat / 2) +
         cos(lat1 * (pi / 180.0)) *
             cos(lat2 * (pi / 180.0)) *
             sin(dLon / 2) *

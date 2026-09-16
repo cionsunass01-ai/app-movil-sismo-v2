@@ -77,7 +77,8 @@ class _MapTabState extends State<MapTab> {
     final pos = await OfflineLocationService.acquirePosition(timeoutSeconds: 6);
     if (!mounted) return;
 
-    final bool hasValidPosition = pos.state == LocationState.current ||
+    final bool hasValidPosition =
+        pos.state == LocationState.current ||
         pos.state == LocationState.lastKnown;
 
     setState(() {
@@ -92,12 +93,14 @@ class _MapTabState extends State<MapTab> {
     if (hasValidPosition) {
       // Update global app state with real location
       final appState = Provider.of<AppStateProvider>(context, listen: false);
-      appState.updateUserLocation(UserLocation(
-        nombre: 'Mi Ubicación',
-        sector: 'Detectado por GPS',
-        lat: pos.latitude,
-        lon: pos.longitude,
-      ));
+      appState.updateUserLocation(
+        UserLocation(
+          nombre: 'Mi Ubicación',
+          sector: 'Detectado por GPS',
+          lat: pos.latitude,
+          lon: pos.longitude,
+        ),
+      );
 
       await _renderUserLocationLayer();
 
@@ -105,10 +108,7 @@ class _MapTabState extends State<MapTab> {
       if (!_hasInitialCenteredOnUser && _mapController != null) {
         _hasInitialCenteredOnUser = true;
         _mapController!.animateCamera(
-          CameraUpdate.newLatLngZoom(
-            LatLng(pos.latitude, pos.longitude),
-            15.0,
-          ),
+          CameraUpdate.newLatLngZoom(LatLng(pos.latitude, pos.longitude), 15.0),
         );
       }
     }
@@ -127,7 +127,9 @@ class _MapTabState extends State<MapTab> {
     if (!mounted) return;
 
     // Check if auto-centering was pending controller readiness
-    if (!_hasInitialCenteredOnUser && _currentPosition != null && _mapController != null) {
+    if (!_hasInitialCenteredOnUser &&
+        _currentPosition != null &&
+        _mapController != null) {
       _hasInitialCenteredOnUser = true;
       _mapController!.animateCamera(
         CameraUpdate.newLatLngZoom(
@@ -261,7 +263,8 @@ class _MapTabState extends State<MapTab> {
     final pos = await OfflineLocationService.acquirePosition(timeoutSeconds: 8);
     if (!mounted) return;
 
-    final bool hasValidPosition = pos.state == LocationState.current ||
+    final bool hasValidPosition =
+        pos.state == LocationState.current ||
         pos.state == LocationState.lastKnown;
 
     setState(() {
@@ -273,12 +276,14 @@ class _MapTabState extends State<MapTab> {
 
     if (hasValidPosition) {
       final appState = Provider.of<AppStateProvider>(context, listen: false);
-      appState.updateUserLocation(UserLocation(
-        nombre: 'Mi Ubicación',
-        sector: 'Detectado por GPS',
-        lat: pos.latitude,
-        lon: pos.longitude,
-      ));
+      appState.updateUserLocation(
+        UserLocation(
+          nombre: 'Mi Ubicación',
+          sector: 'Detectado por GPS',
+          lat: pos.latitude,
+          lon: pos.longitude,
+        ),
+      );
 
       await _renderUserLocationLayer();
       _centerOnUser();
@@ -313,16 +318,16 @@ class _MapTabState extends State<MapTab> {
       await _refreshLocation();
     }
 
+    if (!mounted) return;
+
     if (_currentPosition == null) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Active el GPS para calcular la ruta al punto más cercano.',
-            ),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Active el GPS para calcular la ruta al punto más cercano.',
           ),
-        );
-      }
+        ),
+      );
       return;
     }
 
@@ -333,6 +338,8 @@ class _MapTabState extends State<MapTab> {
       blockedEdgeIds: _blockedEdgeIds,
     );
 
+    if (!mounted) return;
+
     if (search != null && search.winnerPoint != null) {
       setState(() {
         _selectedPoint = search.winnerPoint;
@@ -340,23 +347,21 @@ class _MapTabState extends State<MapTab> {
       });
       _drawRouteOnMap();
     } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No se encontró una vía peatonal transitable a menos de 50 m para conectar con un punto.',
-            ),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'No se encontró una vía peatonal transitable a menos de 50 m para conectar con un punto.',
           ),
-        );
-      }
+        ),
+      );
     }
   }
 
   void _selectPointById(String id) {
     final match = _engine.waterPoints.cast<Map<String, dynamic>?>().firstWhere(
-          (p) => p?['water_point_id'] == id,
-          orElse: () => null,
-        );
+      (p) => p?['water_point_id'] == id,
+      orElse: () => null,
+    );
     if (match != null) {
       _selectPoint(match);
     }
@@ -453,7 +458,9 @@ class _MapTabState extends State<MapTab> {
   }
 
   void _fitRouteCameraBounds() {
-    if (_mapController == null || _selectedPoint == null || _currentPosition == null) {
+    if (_mapController == null ||
+        _selectedPoint == null ||
+        _currentPosition == null) {
       return;
     }
 
@@ -481,14 +488,18 @@ class _MapTabState extends State<MapTab> {
     final latDelta = (maxLat - minLat).abs();
     final lonDelta = (maxLon - minLon).abs();
 
-    final effectiveMinLat =
-        latDelta < 0.003 ? minLat - 0.002 : minLat - (latDelta * 0.15);
-    final effectiveMaxLat =
-        latDelta < 0.003 ? maxLat + 0.002 : maxLat + (latDelta * 0.15);
-    final effectiveMinLon =
-        lonDelta < 0.003 ? minLon - 0.002 : minLon - (lonDelta * 0.15);
-    final effectiveMaxLon =
-        lonDelta < 0.003 ? maxLon + 0.002 : maxLon + (lonDelta * 0.15);
+    final effectiveMinLat = latDelta < 0.003
+        ? minLat - 0.002
+        : minLat - (latDelta * 0.15);
+    final effectiveMaxLat = latDelta < 0.003
+        ? maxLat + 0.002
+        : maxLat + (latDelta * 0.15);
+    final effectiveMinLon = lonDelta < 0.003
+        ? minLon - 0.002
+        : minLon - (lonDelta * 0.15);
+    final effectiveMaxLon = lonDelta < 0.003
+        ? maxLon + 0.002
+        : maxLon + (lonDelta * 0.15);
 
     try {
       _mapController!.animateCamera(
@@ -604,8 +615,11 @@ class _MapTabState extends State<MapTab> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(LucideIcons.triangleAlert,
-                  size: 44, color: AppColors.primaryRed),
+              const Icon(
+                LucideIcons.triangleAlert,
+                size: 44,
+                color: AppColors.primaryRed,
+              ),
               const SizedBox(height: 12),
               const Text(
                 'No se pudo cargar el mapa offline',
@@ -677,8 +691,9 @@ class _MapTabState extends State<MapTab> {
                     height: 14,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(AppColors.sunassBlue),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.sunassBlue,
+                      ),
                     ),
                   ),
                   SizedBox(width: 8),

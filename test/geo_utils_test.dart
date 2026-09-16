@@ -5,7 +5,12 @@ void main() {
   group('GeoUtils Tests', () {
     test('calculateDistanceMeters returns accurate Haversine distance', () {
       // Plaza de Armas Moquegua to Parque Mariscal Nieto (~180m)
-      final dist = GeoUtils.calculateDistanceMeters(-17.1950, -70.9345, -17.1938, -70.9356);
+      final dist = GeoUtils.calculateDistanceMeters(
+        -17.1950,
+        -70.9345,
+        -17.1938,
+        -70.9356,
+      );
       expect(dist, inInclusiveRange(150, 200));
     });
 

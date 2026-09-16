@@ -34,11 +34,36 @@ class VectorMapPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
 
-    _drawRoundedBlock(canvas, const Rect.fromLTWH(20, 20, 75, 65), blockPaint, blockBorderPaint);
-    _drawRoundedBlock(canvas, const Rect.fromLTWH(110, 20, 95, 65), blockPaint, blockBorderPaint);
-    _drawRoundedBlock(canvas, const Rect.fromLTWH(220, 20, 160, 50), blockPaint, blockBorderPaint);
-    _drawRoundedBlock(canvas, const Rect.fromLTWH(20, 220, 80, 80), blockPaint, blockBorderPaint);
-    _drawRoundedBlock(canvas, const Rect.fromLTWH(250, 220, 130, 80), blockPaint, blockBorderPaint);
+    _drawRoundedBlock(
+      canvas,
+      const Rect.fromLTWH(20, 20, 75, 65),
+      blockPaint,
+      blockBorderPaint,
+    );
+    _drawRoundedBlock(
+      canvas,
+      const Rect.fromLTWH(110, 20, 95, 65),
+      blockPaint,
+      blockBorderPaint,
+    );
+    _drawRoundedBlock(
+      canvas,
+      const Rect.fromLTWH(220, 20, 160, 50),
+      blockPaint,
+      blockBorderPaint,
+    );
+    _drawRoundedBlock(
+      canvas,
+      const Rect.fromLTWH(20, 220, 80, 80),
+      blockPaint,
+      blockBorderPaint,
+    );
+    _drawRoundedBlock(
+      canvas,
+      const Rect.fromLTWH(250, 220, 130, 80),
+      blockPaint,
+      blockBorderPaint,
+    );
 
     // 3. Rio Moquegua (River channel across city)
     final riverPath = Path()
@@ -60,7 +85,13 @@ class VectorMapPainter extends CustomPainter {
     canvas.drawPath(riverPath, riverDashPaint);
 
     // River Text
-    _drawText(canvas, 'RÍO MOQUEGUA', const Offset(300, 265), fontSize: 7, color: const Color(0xFF0369A1));
+    _drawText(
+      canvas,
+      'RÍO MOQUEGUA',
+      const Offset(300, 265),
+      fontSize: 7,
+      color: const Color(0xFF0369A1),
+    );
 
     // 4. Safe Green Gathering Parks
     final parkPaint = Paint()..color = AppColors.mapPark;
@@ -70,12 +101,36 @@ class VectorMapPainter extends CustomPainter {
       ..strokeWidth = 2.0;
 
     // Alameda & Plaza area
-    _drawRoundedBlock(canvas, const Rect.fromLTWH(120, 100, 130, 90), parkPaint, parkBorderPaint);
-    _drawText(canvas, 'PARQUE LA ALAMEDA', const Offset(135, 140), fontSize: 7.5, color: const Color(0xFF166534), isBold: true);
+    _drawRoundedBlock(
+      canvas,
+      const Rect.fromLTWH(120, 100, 130, 90),
+      parkPaint,
+      parkBorderPaint,
+    );
+    _drawText(
+      canvas,
+      'PARQUE LA ALAMEDA',
+      const Offset(135, 140),
+      fontSize: 7.5,
+      color: const Color(0xFF166534),
+      isBold: true,
+    );
 
     // Chen Chen park area
-    _drawRoundedBlock(canvas, const Rect.fromLTWH(240, 75, 140, 80), parkPaint, parkBorderPaint);
-    _drawText(canvas, 'ZONA PARQUE CHEN CHEN', const Offset(250, 115), fontSize: 7.5, color: const Color(0xFF166534), isBold: true);
+    _drawRoundedBlock(
+      canvas,
+      const Rect.fromLTWH(240, 75, 140, 80),
+      parkPaint,
+      parkBorderPaint,
+    );
+    _drawText(
+      canvas,
+      'ZONA PARQUE CHEN CHEN',
+      const Offset(250, 115),
+      fontSize: 7.5,
+      color: const Color(0xFF166534),
+      isBold: true,
+    );
 
     // 5. Main Avenues / Grid Roads
     final roadPaint = Paint()
@@ -94,8 +149,16 @@ class VectorMapPainter extends CustomPainter {
       ..color = AppColors.mapBlockBorder
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
-    canvas.drawLine(const Offset(105, 0), const Offset(105, 380), roadLinePaint);
-    canvas.drawLine(const Offset(225, 0), const Offset(225, 380), roadLinePaint);
+    canvas.drawLine(
+      const Offset(105, 0),
+      const Offset(105, 380),
+      roadLinePaint,
+    );
+    canvas.drawLine(
+      const Offset(225, 0),
+      const Offset(225, 380),
+      roadLinePaint,
+    );
 
     // 6. Safe Pedestrian Evacuation Route
     if (showRoute) {
@@ -127,14 +190,12 @@ class VectorMapPainter extends CustomPainter {
     canvas.drawCircle(
       gpsCenter,
       13,
-      Paint()..color = (isEmergency ? AppColors.primaryRed : AppColors.sunassCyan).withValues(alpha: 0.25),
+      Paint()
+        ..color = (isEmergency ? AppColors.primaryRed : AppColors.sunassCyan)
+            .withValues(alpha: 0.25),
     );
     // Outer border
-    canvas.drawCircle(
-      gpsCenter,
-      8,
-      Paint()..color = AppColors.slate900,
-    );
+    canvas.drawCircle(gpsCenter, 8, Paint()..color = AppColors.slate900);
     canvas.drawCircle(
       gpsCenter,
       8,
@@ -144,15 +205,24 @@ class VectorMapPainter extends CustomPainter {
         ..strokeWidth = 2,
     );
     // Center point
-    canvas.drawCircle(
-      gpsCenter,
-      3.5,
-      Paint()..color = const Color(0xFF38BDF8),
-    );
+    canvas.drawCircle(gpsCenter, 3.5, Paint()..color = const Color(0xFF38BDF8));
     // Pill label
-    final labelBg = RRect.fromRectAndRadius(const Rect.fromLTWH(38, 262, 44, 14), const Radius.circular(3));
-    canvas.drawRRect(labelBg, Paint()..color = AppColors.slate900.withValues(alpha: 0.9));
-    _drawText(canvas, 'TÚ AQUÍ', const Offset(43, 264), fontSize: 7, color: AppColors.white, isBold: true);
+    final labelBg = RRect.fromRectAndRadius(
+      const Rect.fromLTWH(38, 262, 44, 14),
+      const Radius.circular(3),
+    );
+    canvas.drawRRect(
+      labelBg,
+      Paint()..color = AppColors.slate900.withValues(alpha: 0.9),
+    );
+    _drawText(
+      canvas,
+      'TÚ AQUÍ',
+      const Offset(43, 264),
+      fontSize: 7,
+      color: AppColors.white,
+      isBold: true,
+    );
 
     // 8. Water Distribution Points on Map
     _drawPointMarker(
@@ -228,11 +298,7 @@ class VectorMapPainter extends CustomPainter {
     }
 
     // Outer Circle
-    canvas.drawCircle(
-      position,
-      10,
-      Paint()..color = color,
-    );
+    canvas.drawCircle(position, 10, Paint()..color = color);
     canvas.drawCircle(
       position,
       10,
@@ -242,22 +308,25 @@ class VectorMapPainter extends CustomPainter {
         ..strokeWidth = 2,
     );
     // Inner white dot
-    canvas.drawCircle(
-      position,
-      3.5,
-      Paint()..color = AppColors.white,
-    );
+    canvas.drawCircle(position, 3.5, Paint()..color = AppColors.white);
 
     // Text Badge Above
     final double badgeWidth = (name.length * 4.8) + 12;
     final badgeRect = RRect.fromRectAndRadius(
-      Rect.fromCenter(center: Offset(position.dx, position.dy - 18), width: badgeWidth, height: 14),
+      Rect.fromCenter(
+        center: Offset(position.dx, position.dy - 18),
+        width: badgeWidth,
+        height: 14,
+      ),
       const Radius.circular(4),
     );
 
     canvas.drawRRect(
       badgeRect,
-      Paint()..color = (color == AppColors.primaryRed ? const Color(0xFF7F1D1D) : const Color(0xFF064E3B)),
+      Paint()
+        ..color = (color == AppColors.primaryRed
+            ? const Color(0xFF7F1D1D)
+            : const Color(0xFF064E3B)),
     );
     canvas.drawRRect(
       badgeRect,

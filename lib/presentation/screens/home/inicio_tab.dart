@@ -75,16 +75,19 @@ class _InicioTabState extends State<InicioTab> {
       // If permission granted, quickly acquire position
       if (permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse) {
-        final pos =
-            await OfflineLocationService.acquirePosition(timeoutSeconds: 5);
+        final pos = await OfflineLocationService.acquirePosition(
+          timeoutSeconds: 5,
+        );
         if (pos.state == LocationState.current ||
             pos.state == LocationState.lastKnown) {
-          state.updateUserLocation(UserLocation(
-            nombre: 'Mi Ubicación',
-            sector: 'Detectado por GPS',
-            lat: pos.latitude,
-            lon: pos.longitude,
-          ));
+          state.updateUserLocation(
+            UserLocation(
+              nombre: 'Mi Ubicación',
+              sector: 'Detectado por GPS',
+              lat: pos.latitude,
+              lon: pos.longitude,
+            ),
+          );
         }
       }
     } catch (_) {}

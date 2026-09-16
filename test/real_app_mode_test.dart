@@ -62,106 +62,129 @@ void main() {
       }
     });
 
-    test('2. PointsTab orders points according to provided user location', () async {
-      final provider = AppStateProvider(
-        connectivityService: FakeConnectivityService(),
-      );
-      await provider.loadCatalog();
+    test(
+      '2. PointsTab orders points according to provided user location',
+      () async {
+        final provider = AppStateProvider(
+          connectivityService: FakeConnectivityService(),
+        );
+        await provider.loadCatalog();
 
-      // Set user location in Callao (near port / Plaza Grau Callao)
-      const callaoLoc = UserLocation(
-        nombre: 'Callao',
-        sector: 'Callao',
-        lat: -12.0600,
-        lon: -77.1450,
-      );
-      provider.updateUserLocation(callaoLoc);
+        // Set user location in Callao (near port / Plaza Grau Callao)
+        const callaoLoc = UserLocation(
+          nombre: 'Callao',
+          sector: 'Callao',
+          lat: -12.0600,
+          lon: -77.1450,
+        );
+        provider.updateUserLocation(callaoLoc);
 
-      final topCallao = provider.points.first;
-      expect(topCallao.lon, lessThan(-77.05)); // Closer to Callao than Lima Este
+        final topCallao = provider.points.first;
+        expect(
+          topCallao.lon,
+          lessThan(-77.05),
+        ); // Closer to Callao than Lima Este
 
-      // Set user location in Santiago de Surco / Miraflores (South Lima)
-      const surcoLoc = UserLocation(
-        nombre: 'Surco',
-        sector: 'Surco',
-        lat: -12.1400,
-        lon: -77.0000,
-      );
-      provider.updateUserLocation(surcoLoc);
+        // Set user location in Santiago de Surco / Miraflores (South Lima)
+        const surcoLoc = UserLocation(
+          nombre: 'Surco',
+          sector: 'Surco',
+          lat: -12.1400,
+          lon: -77.0000,
+        );
+        provider.updateUserLocation(surcoLoc);
 
-      final topSurco = provider.points.first;
-      expect(topSurco.lat, lessThan(-12.08)); // Closer to Southern Lima
-    });
+        final topSurco = provider.points.first;
+        expect(topSurco.lat, lessThan(-12.08)); // Closer to Southern Lima
+      },
+    );
 
-    test('3. Does not label Haversine as walking distance or minutes on foot', () async {
-      final provider = AppStateProvider(
-        connectivityService: FakeConnectivityService(),
-      );
-      await provider.loadCatalog();
+    test(
+      '3. Does not label Haversine as walking distance or minutes on foot',
+      () async {
+        final provider = AppStateProvider(
+          connectivityService: FakeConnectivityService(),
+        );
+        await provider.loadCatalog();
 
-      provider.updateUserLocation(const UserLocation(
-        nombre: 'Lima Centro',
-        sector: 'Centro',
-        lat: -12.0464,
-        lon: -77.0428,
-      ));
+        provider.updateUserLocation(
+          const UserLocation(
+            nombre: 'Lima Centro',
+            sector: 'Centro',
+            lat: -12.0464,
+            lon: -77.0428,
+          ),
+        );
 
-      // Points with geodesic distance must have isDistanceApproximate = true
-      final approxPoint = provider.points.first;
-      expect(approxPoint.isDistanceApproximate, isTrue);
-      expect(approxPoint.distMeters, isNotNull);
-    });
+        // Points with geodesic distance must have isDistanceApproximate = true
+        final approxPoint = provider.points.first;
+        expect(approxPoint.isDistanceApproximate, isTrue);
+        expect(approxPoint.distMeters, isNotNull);
+      },
+    );
 
-    testWidgets('4. PointsTab renders honest approximate distance badge and no walking time', (tester) async {
-      final provider = AppStateProvider(
-        connectivityService: FakeConnectivityService(),
-      );
-      await provider.loadCatalog();
-      provider.updateUserLocation(const UserLocation(
-        nombre: 'Centro',
-        sector: 'Lima',
-        lat: -12.0464,
-        lon: -77.0428,
-      ));
+    testWidgets(
+      '4. PointsTab renders honest approximate distance badge and no walking time',
+      (tester) async {
+        final provider = AppStateProvider(
+          connectivityService: FakeConnectivityService(),
+        );
+        await provider.loadCatalog();
+        provider.updateUserLocation(
+          const UserLocation(
+            nombre: 'Centro',
+            sector: 'Lima',
+            lat: -12.0464,
+            lon: -77.0428,
+          ),
+        );
 
-      await tester.pumpWidget(createTestScope(const PointsTab(), provider));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+        await tester.pumpWidget(createTestScope(const PointsTab(), provider));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
 
-      // Must find approximate distance label and NEVER claim minutes on foot
-      expect(find.text('Distancia aprox.'), findsWidgets);
-      expect(find.textContaining('min a pie'), findsNothing);
-    });
+        // Must find approximate distance label and NEVER claim minutes on foot
+        expect(find.text('Distancia aprox.'), findsWidgets);
+        expect(find.textContaining('min a pie'), findsNothing);
+      },
+    );
 
-    test('5. MapTab camera auto-center flag logic triggers once on first location', () {
-      bool hasInitialCentered = false;
+    test(
+      '5. MapTab camera auto-center flag logic triggers once on first location',
+      () {
+        bool hasInitialCentered = false;
 
-      void onFirstLocationAcquired() {
-        if (!hasInitialCentered) {
-          hasInitialCentered = true;
+        void onFirstLocationAcquired() {
+          if (!hasInitialCentered) {
+            hasInitialCentered = true;
+          }
         }
-      }
 
-      onFirstLocationAcquired();
-      expect(hasInitialCentered, isTrue);
+        onFirstLocationAcquired();
+        expect(hasInitialCentered, isTrue);
 
-      // Subsequent location fixes or user pans do not re-center automatically
-      bool recenteredAgain = false;
-      void onSubsequentLocation() {
-        if (!hasInitialCentered) {
-          recenteredAgain = true;
+        // Subsequent location fixes or user pans do not re-center automatically
+        bool recenteredAgain = false;
+        void onSubsequentLocation() {
+          if (!hasInitialCentered) {
+            recenteredAgain = true;
+          }
         }
-      }
 
-      onSubsequentLocation();
-      expect(recenteredAgain, isFalse);
-    });
+        onSubsequentLocation();
+        expect(recenteredAgain, isFalse);
+      },
+    );
 
-    testWidgets('6. ConnectivityStrip reflects physical ConnectivityService', (tester) async {
+    testWidgets('6. ConnectivityStrip reflects physical ConnectivityService', (
+      tester,
+    ) async {
       final fakeConn = FakeConnectivityService(NetworkState.connected);
       final provider = AppStateProvider(connectivityService: fakeConn);
 
-      await tester.pumpWidget(createTestScope(const ConnectivityStrip(), provider));
+      await tester.pumpWidget(
+        createTestScope(const ConnectivityStrip(), provider),
+      );
       await tester.pump();
 
       expect(find.text('Con conexión de red'), findsOneWidget);
@@ -171,7 +194,9 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text('Sin conexión — Mapa local y cálculo de rutas disponibles en el dispositivo'),
+        find.text(
+          'Sin conexión — Mapa local y cálculo de rutas disponibles en el dispositivo',
+        ),
         findsOneWidget,
       );
 
@@ -179,71 +204,88 @@ void main() {
       provider.dispose();
     });
 
-    testWidgets('7. ConnectivityStrip does not toggle connection on citizen tap', (tester) async {
-      final fakeConn = FakeConnectivityService(NetworkState.connected);
-      final provider = AppStateProvider(connectivityService: fakeConn);
+    testWidgets(
+      '7. ConnectivityStrip does not toggle connection on citizen tap',
+      (tester) async {
+        final fakeConn = FakeConnectivityService(NetworkState.connected);
+        final provider = AppStateProvider(connectivityService: fakeConn);
 
-      await tester.pumpWidget(createTestScope(const ConnectivityStrip(), provider));
-      await tester.pump();
+        await tester.pumpWidget(
+          createTestScope(const ConnectivityStrip(), provider),
+        );
+        await tester.pump();
 
-      expect(provider.isOnline, isTrue);
+        expect(provider.isOnline, isTrue);
 
-      // Tap on the strip: must NOT toggle state (strip is READ-ONLY in real mode)
-      await tester.tap(find.byType(ConnectivityStrip));
-      await tester.pump();
+        // Tap on the strip: must NOT toggle state (strip is READ-ONLY in real mode)
+        await tester.tap(find.byType(ConnectivityStrip));
+        await tester.pump();
 
-      expect(provider.isOnline, isTrue);
-    });
+        expect(provider.isOnline, isTrue);
+      },
+    );
 
-    test('8. Demo connectivity override works only when simulation is explicitly enabled', () {
-      final fakeConn = FakeConnectivityService(NetworkState.connected);
-      final provider = AppStateProvider(connectivityService: fakeConn);
+    test(
+      '8. Demo connectivity override works only when simulation is explicitly enabled',
+      () {
+        final fakeConn = FakeConnectivityService(NetworkState.connected);
+        final provider = AppStateProvider(connectivityService: fakeConn);
 
-      expect(provider.isConnectivitySimulationEnabled, isFalse);
-      expect(provider.isOnline, isTrue);
+        expect(provider.isConnectivitySimulationEnabled, isFalse);
+        expect(provider.isOnline, isTrue);
 
-      // Change simulated value without enabling simulation: real connectivity still rules
-      provider.setSimulatedConnectivity(NetworkState.disconnected);
-      expect(provider.isOnline, isTrue);
+        // Change simulated value without enabling simulation: real connectivity still rules
+        provider.setSimulatedConnectivity(NetworkState.disconnected);
+        expect(provider.isOnline, isTrue);
 
-      // Enable simulation: simulated state takes effect
-      provider.setConnectivitySimulationEnabled(true);
-      expect(provider.isConnectivitySimulationEnabled, isTrue);
-      expect(provider.isOnline, isFalse);
-    });
+        // Enable simulation: simulated state takes effect
+        provider.setConnectivitySimulationEnabled(true);
+        expect(provider.isConnectivitySimulationEnabled, isTrue);
+        expect(provider.isOnline, isFalse);
+      },
+    );
 
-    test('9. Disabling simulation immediately restores real hardware state', () {
-      final fakeConn = FakeConnectivityService(NetworkState.connected);
-      final provider = AppStateProvider(connectivityService: fakeConn);
+    test(
+      '9. Disabling simulation immediately restores real hardware state',
+      () {
+        final fakeConn = FakeConnectivityService(NetworkState.connected);
+        final provider = AppStateProvider(connectivityService: fakeConn);
 
-      provider.setConnectivitySimulationEnabled(true);
-      provider.setSimulatedConnectivity(NetworkState.disconnected);
-      expect(provider.isOnline, isFalse);
+        provider.setConnectivitySimulationEnabled(true);
+        provider.setSimulatedConnectivity(NetworkState.disconnected);
+        expect(provider.isOnline, isFalse);
 
-      // Disable simulation: immediately reverts to real connected state
-      provider.setConnectivitySimulationEnabled(false);
-      expect(provider.isConnectivitySimulationEnabled, isFalse);
-      expect(provider.isOnline, isTrue);
-    });
+        // Disable simulation: immediately reverts to real connected state
+        provider.setConnectivitySimulationEnabled(false);
+        expect(provider.isConnectivitySimulationEnabled, isFalse);
+        expect(provider.isOnline, isTrue);
+      },
+    );
 
-    testWidgets('10. If local catalog does not exist, demo catalog does NOT appear', (tester) async {
-      final unavailableRepo = _UnavailableCatalogRepo();
-      final provider = AppStateProvider(
-        connectivityService: FakeConnectivityService(),
-        catalogRepo: unavailableRepo,
-      );
-      await provider.loadCatalog();
+    testWidgets(
+      '10. If local catalog does not exist, demo catalog does NOT appear',
+      (tester) async {
+        final unavailableRepo = _UnavailableCatalogRepo();
+        final provider = AppStateProvider(
+          connectivityService: FakeConnectivityService(),
+          catalogRepo: unavailableRepo,
+        );
+        await provider.loadCatalog();
 
-      await tester.pumpWidget(createTestScope(const PointsTab(), provider));
-      await tester.pump();
+        await tester.pumpWidget(createTestScope(const PointsTab(), provider));
+        await tester.pump();
 
-      // Assert NO Moquegua points or fake fixtures exist
-      expect(find.text('Cercado de Moquegua'), findsNothing);
-      expect(find.text('San Francisco'), findsNothing);
-      expect(find.text('Chen Chen'), findsNothing);
-      expect(provider.points.isEmpty, isTrue);
-      expect(find.text('Catálogo local no disponible en esta instalación.'), findsOneWidget);
-    });
+        // Assert NO Moquegua points or fake fixtures exist
+        expect(find.text('Cercado de Moquegua'), findsNothing);
+        expect(find.text('San Francisco'), findsNothing);
+        expect(find.text('Chen Chen'), findsNothing);
+        expect(provider.points.isEmpty, isTrue);
+        expect(
+          find.text('Catálogo local no disponible en esta instalación.'),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('11. Mi Sector does not invent sector data', (tester) async {
       final provider = AppStateProvider(
@@ -256,7 +298,10 @@ void main() {
       await tester.pumpWidget(createTestScope(const SectorTab(), provider));
       await tester.pump();
 
-      expect(find.text('Información de sector pendiente de integración'), findsOneWidget);
+      expect(
+        find.text('Información de sector pendiente de integración'),
+        findsOneWidget,
+      );
       expect(find.text('FUNCIÓN EN DESARROLLO'), findsOneWidget);
       expect(find.text('Cercado de Moquegua'), findsNothing);
     });

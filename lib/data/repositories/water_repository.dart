@@ -15,14 +15,14 @@ class WaterRepository {
 
   List<WaterPoint> getPoints(UserLocation userLocation) {
     return _points.map((p) {
-      final int dist = GeoUtils.calculateDistanceMeters(
-        userLocation.lat,
-        userLocation.lon,
-        p.lat,
-        p.lon,
-      );
-      return p.copyWith(distMeters: dist);
-    }).toList()
+        final int dist = GeoUtils.calculateDistanceMeters(
+          userLocation.lat,
+          userLocation.lon,
+          p.lat,
+          p.lon,
+        );
+        return p.copyWith(distMeters: dist);
+      }).toList()
       ..sort((a, b) => (a.distMeters ?? 0).compareTo(b.distMeters ?? 0));
   }
 
@@ -37,10 +37,7 @@ class WaterRepository {
   }) {
     _points = _points.map((p) {
       if (p.id == pointId) {
-        return p.copyWith(
-          estE: status,
-          estETxt: statusText,
-        );
+        return p.copyWith(estE: status, estETxt: statusText);
       }
       return p;
     }).toList();
@@ -59,7 +56,11 @@ class WaterRepository {
       if (jsonList == null || jsonList.isEmpty) return [];
 
       return jsonList
-          .map((item) => CitizenReport.fromJson(json.decode(item) as Map<String, dynamic>))
+          .map(
+            (item) => CitizenReport.fromJson(
+              json.decode(item) as Map<String, dynamic>,
+            ),
+          )
           .toList();
     } catch (_) {
       return [];
@@ -71,8 +72,9 @@ class WaterRepository {
     final List<CitizenReport> currentList = await loadQueuedReports();
     currentList.insert(0, report);
 
-    final List<String> encodedList =
-        currentList.map((r) => json.encode(r.toJson())).toList();
+    final List<String> encodedList = currentList
+        .map((r) => json.encode(r.toJson()))
+        .toList();
     await prefs.setStringList(_queuedReportsKey, encodedList);
   }
 
