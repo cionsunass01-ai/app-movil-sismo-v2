@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 enum NetworkState { connected, disconnected, unknown }
@@ -28,7 +29,7 @@ class ConnectivityService {
     if (_isInitialized) return;
 
     // In automated test runner environment, default to connected without hanging on unmocked platform channels
-    if (Platform.environment.containsKey('FLUTTER_TEST')) {
+    if (!kIsWeb && Platform.environment.containsKey('FLUTTER_TEST')) {
       _currentState = NetworkState.connected;
       _isInitialized = true;
       return;

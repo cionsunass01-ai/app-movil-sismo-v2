@@ -9,6 +9,7 @@ class OfflineLocationService {
   /// 3. Returns explicit [GnssPosition] with state and accuracy metrics.
   static Future<GnssPosition> acquirePosition({
     int timeoutSeconds = 30,
+    bool requestIfNotGranted = true,
     void Function(String progressMessage)? onProgress,
   }) async {
     onProgress?.call('Verificando servicios de ubicación del dispositivo...');
@@ -26,6 +27,14 @@ class OfflineLocationService {
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
+      if (!requestIfNotGranted) {
+        return const GnssPosition(
+          latitude: -12.0453,
+          longitude: -77.0311,
+          state: LocationState.unavailable,
+          message: 'Permiso de ubicación pendiente de autorización.',
+        );
+      }
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         return const GnssPosition(

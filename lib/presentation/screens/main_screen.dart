@@ -23,30 +23,18 @@ class MainScreen extends StatelessWidget {
     final state = context.watch<AppStateProvider>();
     final activeTab = state.activeTab;
 
-    Widget bodyContent;
-    switch (activeTab) {
-      case AppTab.inicio:
-        bodyContent = const InicioTab();
-        break;
-      case AppTab.mapa:
-        bodyContent = const MapTab();
-        break;
-      case AppTab.puntos:
-        bodyContent = const PointsTab();
-        break;
-      case AppTab.mas:
-        bodyContent = const MoreTab();
-        break;
-      case AppTab.sector:
-        bodyContent = const SectorTab();
-        break;
-      case AppTab.agua:
-        bodyContent = const SafeWaterTab();
-        break;
-      case AppTab.reportar:
-        bodyContent = const ReportTab();
-        break;
-    }
+    const tabs = [
+      AppTab.inicio,
+      AppTab.mapa,
+      AppTab.puntos,
+      AppTab.mas,
+      AppTab.sector,
+      AppTab.agua,
+      AppTab.reportar,
+    ];
+
+    final currentIndex = tabs.indexOf(activeTab);
+    final effectiveIndex = currentIndex >= 0 ? currentIndex : 0;
 
     return Scaffold(
       backgroundColor: AppColors.slate100,
@@ -57,7 +45,20 @@ class MainScreen extends StatelessWidget {
             const EmergencyBanner(),
             const ConnectivityStrip(),
             const ToastBanner(),
-            Expanded(child: bodyContent),
+            Expanded(
+              child: IndexedStack(
+                index: effectiveIndex,
+                children: const [
+                  InicioTab(),
+                  MapTab(),
+                  PointsTab(),
+                  MoreTab(),
+                  SectorTab(),
+                  SafeWaterTab(),
+                  ReportTab(),
+                ],
+              ),
+            ),
             const BottomNavBar(),
           ],
         ),

@@ -1,9 +1,11 @@
+import "package:flutter/foundation.dart" show kIsWeb;
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
 import "../../../core/constants/app_colors.dart";
 import "../../providers/app_state_provider.dart";
 import "../../widgets/demo_tools_modal.dart";
+import "../../widgets/pwa_install_prompt_modal.dart";
 
 class MoreTab extends StatelessWidget {
   const MoreTab({super.key});
@@ -127,6 +129,19 @@ class MoreTab extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
+
+          // Instalar Aplicación (PWA en Web)
+          if (kIsWeb) ...[
+            _OptionCard(
+              icon: LucideIcons.smartphone,
+              iconColor: AppColors.sunassBlue,
+              title: "Instalar Aplicación en tu Celular",
+              subtitle:
+                  "Agrega AguaCION a tu pantalla de inicio para abrirla como aplicación móvil.",
+              onTap: () => PwaInstallPromptModal.show(context),
+            ),
+            const SizedBox(height: 10),
+          ],
 
           // 4. Acerca de
           _OptionCard(

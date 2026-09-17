@@ -69,7 +69,7 @@ class EmergencyBanner extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        "Escenario simulado: priorizando puntos habilitados y racionamiento.",
+                        "Simulación activa: confirmación operativa en terreno hasta 48 h post-sismo.",
                         style: TextStyle(
                           color: Color(0xFFFECACA),
                           fontSize: 10,

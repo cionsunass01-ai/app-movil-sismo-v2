@@ -14,6 +14,7 @@ import '../../../poc/offline_navigation/services/offline_routing_engine.dart';
 import '../../../data/models/user_location.dart';
 import '../../providers/app_state_provider.dart';
 import '../../widgets/demo_tools_modal.dart';
+import '../../widgets/location_permission_modal.dart';
 import 'widgets/water_point_map_sheet.dart';
 
 class MapTab extends StatefulWidget {
@@ -74,7 +75,10 @@ class _MapTabState extends State<MapTab> {
     if (!mounted) return;
     setState(() => _isLocating = true);
 
-    final pos = await OfflineLocationService.acquirePosition(timeoutSeconds: 6);
+    final pos = await OfflineLocationService.acquirePosition(
+      timeoutSeconds: 5,
+      requestIfNotGranted: false,
+    );
     if (!mounted) return;
 
     final bool hasValidPosition =
@@ -288,17 +292,30 @@ class _MapTabState extends State<MapTab> {
       await _renderUserLocationLayer();
       _centerOnUser();
     } else {
+      final msg = pos.state == LocationState.permissionDenied
+          ? 'Permiso de ubicación denegado en el navegador. Haz clic en el candado 🔒 junto a la URL y selecciona "Permitir ubicación".'
+          : (pos.message.isNotEmpty
+              ? pos.message
+              : 'No se pudo obtener la ubicación GPS.');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            pos.message.isNotEmpty
-                ? pos.message
-                : 'No se pudo obtener la ubicación GPS.',
-          ),
+          content: Text(msg),
           backgroundColor: AppColors.slate800,
+          duration: const Duration(seconds: 4),
         ),
       );
     }
+  }
+
+  void _requestLocationWithPrimer() {
+    if (_currentPosition != null) {
+      _centerOnUser();
+      return;
+    }
+    LocationPermissionModal.show(
+      context,
+      onAccept: _refreshLocation,
+    );
   }
 
   void _centerOnUser() {
@@ -383,10 +400,14 @@ class _MapTabState extends State<MapTab> {
   void _calculateRouteToSelected() {
     if (_selectedPoint == null) return;
     if (_currentPosition == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Activa la ubicación para trazar la ruta peatonal.'),
-        ),
+      LocationPermissionModal.show(
+        context,
+        onAccept: () async {
+          await _refreshLocation();
+          if (_currentPosition != null) {
+            _calculateRouteToSelected();
+          }
+        },
       );
       return;
     }
@@ -530,6 +551,58 @@ class _MapTabState extends State<MapTab> {
       _selectedPoint = null;
     });
     _mapController?.clearLines();
+  }
+
+  void _show48hDisclaimerDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        title: const Row(
+          children: [
+            Icon(LucideIcons.clockAlert, color: Color(0xFF0284C7), size: 22),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Actualización Post-Desastre',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+              ),
+            ),
+          ],
+        ),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Red preventiva oficial de abastecimiento',
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+            ),
+            SizedBox(height: 6),
+            Text(
+              'Este mapa contiene los 433 puntos de distribución oficial planificados para contingencias en Lima y Callao.\n\nTras un sismo o catástrofe de gran magnitud, la habilitación operativa en campo (llegada de camiones cisterna, apertura de piletas y surtidores) es verificada y consolidada en terreno por los equipos técnicos en un plazo máximo de 48 horas post-evento.',
+              style: TextStyle(
+                fontSize: 12.5,
+                color: AppColors.slate700,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.sunassNavy,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Entendido'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _onMapClick(math.Point<double> point, LatLng latLng) {
@@ -752,7 +825,7 @@ class _MapTabState extends State<MapTab> {
                     ),
                   ),
                   InkWell(
-                    onTap: _refreshLocation,
+                    onTap: _requestLocationWithPrimer,
                     child: const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       child: Text(
@@ -770,6 +843,60 @@ class _MapTabState extends State<MapTab> {
             ),
           ),
 
+        // 2b. 48h Post-Disaster Notice Banner
+        Positioned(
+          top: (_isLocating || _currentPosition == null) ? 56 : 14,
+          left: 14,
+          right: 80,
+          child: InkWell(
+            onTap: _show48hDisclaimerDialog,
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.white.withValues(alpha: 0.95),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppColors.slate200),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    LucideIcons.clockAlert,
+                    size: 13,
+                    color: Color(0xFF0284C7),
+                  ),
+                  SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Puntos sujetos a confirmación operativa (máx. 48 h)',
+                      style: TextStyle(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.slate700,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  SizedBox(width: 4),
+                  Icon(
+                    LucideIcons.info,
+                    size: 12,
+                    color: AppColors.slate400,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
         // 3. Floating Action Controls (GPS & Demo Tools)
         Positioned(
           top: 14,
@@ -779,7 +906,7 @@ class _MapTabState extends State<MapTab> {
               // GPS Button
               FloatingActionButton.small(
                 heroTag: 'map_gps_btn',
-                onPressed: _isLocating ? null : _refreshLocation,
+                onPressed: _isLocating ? null : _requestLocationWithPrimer,
                 backgroundColor: AppColors.white,
                 foregroundColor: AppColors.sunassNavy,
                 elevation: 3,

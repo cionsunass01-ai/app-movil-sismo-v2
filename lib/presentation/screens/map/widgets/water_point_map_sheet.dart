@@ -138,6 +138,39 @@ class WaterPointMapSheet extends StatelessWidget {
                 SourceChip(sourceLabel: "Catálogo local"),
               ],
             ),
+
+            // 48h Post-Disaster Update Disclaimer
+            Container(
+              margin: const EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppColors.slate200),
+              ),
+              child: const Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    LucideIcons.clockAlert,
+                    size: 14,
+                    color: Color(0xFF0284C7),
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      "Actualización operativa: La habilitación física en campo de este punto será confirmada por los equipos técnicos en un plazo máximo de 48 horas tras ocurrida la emergencia.",
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: AppColors.slate600,
+                        height: 1.35,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 12),
 
             // Distance & Estimated Walk Time if route active

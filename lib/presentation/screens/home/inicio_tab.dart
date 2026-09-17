@@ -1,3 +1,4 @@
+import "package:flutter/foundation.dart" show kIsWeb;
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
@@ -7,6 +8,8 @@ import "../../../data/models/user_location.dart";
 import "../../../poc/offline_navigation/models/gnss_state.dart";
 import "../../../poc/offline_navigation/services/offline_location_service.dart";
 import "../../providers/app_state_provider.dart";
+import "../../widgets/location_permission_modal.dart";
+import "../../widgets/pwa_install_prompt_modal.dart";
 
 class InicioTab extends StatefulWidget {
   const InicioTab({super.key});
@@ -25,46 +28,13 @@ class _InicioTabState extends State<InicioTab> {
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         if (!mounted) return;
-        final proceed = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            title: const Row(
-              children: [
-                Icon(LucideIcons.mapPin, color: AppColors.sunassBlue, size: 22),
-                SizedBox(width: 8),
-                Text(
-                  "Permiso de Ubicación",
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
-                ),
-              ],
-            ),
-            content: const Text(
-              "Usaremos tu ubicación para calcular la ruta peatonal más cercana a un punto de abastecimiento oficial en Lima y Callao.",
-              style: TextStyle(fontSize: 13.5, color: AppColors.slate700),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text(
-                  "Cancelar",
-                  style: TextStyle(color: AppColors.slate600),
-                ),
-              ),
-              FilledButton(
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.sunassBlue,
-                ),
-                onPressed: () => Navigator.pop(ctx, true),
-                child: const Text("Continuar"),
-              ),
-            ],
-          ),
+        bool userApproved = false;
+        await LocationPermissionModal.show(
+          context,
+          onAccept: () => userApproved = true,
         );
 
-        if (proceed != true) {
+        if (!userApproved) {
           setState(() => _isCheckingPermission = false);
           return;
         }
@@ -279,6 +249,91 @@ class _InicioTabState extends State<InicioTab> {
             ),
           ),
           const SizedBox(height: 16),
+
+          // PWA Install Banner (only on Web if not standalone)
+          if (kIsWeb && !PwaInstallPromptModal.isAlreadyInstalled) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: AppColors.sunassBlue.withValues(alpha: 0.3),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: AppColors.softBlue,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      LucideIcons.smartphone,
+                      color: AppColors.sunassNavy,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Instalar en tu teléfono",
+                          style: TextStyle(
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.slate900,
+                          ),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          "Agrega el icono para abrir AguaCION sin usar el navegador.",
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            color: AppColors.slate500,
+                            height: 1.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  FilledButton(
+                    onPressed: () => PwaInstallPromptModal.show(context),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.sunassBlue,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      "Instalar",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
+          ],
 
           // 3. System Offline Status Card
           Container(

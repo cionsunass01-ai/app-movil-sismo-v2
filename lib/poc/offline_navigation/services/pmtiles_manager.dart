@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class PmtilesManager {
   static const String assetPmtilesPath =
@@ -23,6 +24,10 @@ class PmtilesManager {
   /// Ensures the PMTiles asset is unpacked to private app storage for direct random access (mmap)
   /// by MapLibre Native without needing any local loopback HTTP server.
   static Future<File> prepareLocalPmtiles() async {
+    if (kIsWeb) {
+      throw UnsupportedError('File system access not supported on Web');
+    }
+
     if (_localPmtilesFile != null && await _localPmtilesFile!.exists()) {
       return _localPmtilesFile!;
     }
@@ -47,6 +52,10 @@ class PmtilesManager {
   /// Ensures offline font glyphs PBFs are unpacked to private app storage.
   /// Generates both raw folder names and URL-encoded folder names for MapLibre C++ compatibility.
   static Future<Directory> prepareLocalFonts() async {
+    if (kIsWeb) {
+      throw UnsupportedError('File system access not supported on Web');
+    }
+
     if (_localFontsDir != null && await _localFontsDir!.exists()) {
       return _localFontsDir!;
     }
@@ -98,28 +107,35 @@ class PmtilesManager {
   static Future<String> getOfflineStyleString() async {
     if (_localStyleJson != null) return _localStyleJson!;
 
-    final pmtilesFile = await prepareLocalPmtiles();
-    final fontsDir = await prepareLocalFonts();
     final rawStyleStr = await rootBundle.loadString(assetStylePath);
     final styleMap = json.decode(rawStyleStr) as Map<String, dynamic>;
 
-    // Formulate fully qualified native pmtiles file URI
-    // e.g. pmtiles://file:///data/user/0/... or pmtiles://file:///var/mobile/...
-    final absPath = pmtilesFile.path;
-    final fileUri = absPath.startsWith('/')
-        ? 'file://$absPath'
-        : 'file:///$absPath';
-    final pmtilesUri = 'pmtiles://$fileUri';
+    if (kIsWeb) {
+      // In Flutter Web, assets are served from the /assets/ directory
+      styleMap['sources']['lima_callao']['url'] = 'pmtiles://assets/$assetPmtilesPath';
+      styleMap['glyphs'] = 'assets/assets/poc/fonts/{fontstack}/{range}.pbf';
+    } else {
+      final pmtilesFile = await prepareLocalPmtiles();
+      final fontsDir = await prepareLocalFonts();
+      
+      // Formulate fully qualified native pmtiles file URI
+      // e.g. pmtiles://file:///data/user/0/... or pmtiles://file:///var/mobile/...
+      final absPath = pmtilesFile.path;
+      final fileUri = absPath.startsWith('/')
+          ? 'file://$absPath'
+          : 'file:///$absPath';
+      final pmtilesUri = 'pmtiles://$fileUri';
 
-    // Inject exact file URI into source
-    styleMap['sources']['lima_callao']['url'] = pmtilesUri;
+      // Inject exact file URI into source
+      styleMap['sources']['lima_callao']['url'] = pmtilesUri;
 
-    // Inject local glyphs file URI
-    final absFontsPath = fontsDir.path;
-    final fontsUri = absFontsPath.startsWith('/')
-        ? 'file://$absFontsPath'
-        : 'file:///$absFontsPath';
-    styleMap['glyphs'] = '$fontsUri/{fontstack}/{range}.pbf';
+      // Inject local glyphs file URI
+      final absFontsPath = fontsDir.path;
+      final fontsUri = absFontsPath.startsWith('/')
+          ? 'file://$absFontsPath'
+          : 'file:///$absFontsPath';
+      styleMap['glyphs'] = '$fontsUri/{fontstack}/{range}.pbf';
+    }
 
     _localStyleJson = json.encode(styleMap);
     return _localStyleJson!;

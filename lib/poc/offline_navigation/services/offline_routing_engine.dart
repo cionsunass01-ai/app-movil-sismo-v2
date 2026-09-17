@@ -61,27 +61,34 @@ class OfflineRoutingEngine {
     coldStartTimestamps['T3_POINTS_LOADED'] = swPoints.elapsedMilliseconds;
 
     // 3. Load CSR Binary Graph
-    onProgress?.call('Cargando grafo peatonal CSR...');
-    final swGraph = Stopwatch()..start();
-    final graphByteData = await rootBundle.load(
-      'assets/poc/routing/pedestrian_graph_lima_csr.bin',
-    );
-    final graphBytes = graphByteData.buffer.asUint8List(
-      graphByteData.offsetInBytes,
-      graphByteData.lengthInBytes,
-    );
-    graph = CsrGraph.fromBytes(graphBytes);
-    swGraph.stop();
-    coldStartTimestamps['T4_GRAPH_LOADED'] = swGraph.elapsedMilliseconds;
+    try {
+      onProgress?.call('Cargando grafo peatonal CSR...');
+      final swGraph = Stopwatch()..start();
+      final graphByteData = await rootBundle.load(
+        'assets/poc/routing/pedestrian_graph_lima_csr.bin',
+      );
+      final graphBytes = graphByteData.buffer.asUint8List(
+        graphByteData.offsetInBytes,
+        graphByteData.lengthInBytes,
+      );
+      graph = CsrGraph.fromBytes(graphBytes);
+      swGraph.stop();
+      coldStartTimestamps['T4_GRAPH_LOADED'] = swGraph.elapsedMilliseconds;
 
-    // 4. Build Spatial Grid for edge snapping
-    onProgress?.call('Construyendo índice espacial para snapping...');
-    final swGrid = Stopwatch()..start();
-    spatialGrid = EdgeSpatialGrid(graph!);
-    router = AstarRouter(graph: graph!, spatialGrid: spatialGrid!);
-    adaptiveSearch = AdaptiveWaterPointSearch(router!);
-    swGrid.stop();
-    coldStartTimestamps['T5_SPATIAL_GRID_READY'] = swGrid.elapsedMilliseconds;
+      // 4. Build Spatial Grid for edge snapping
+      onProgress?.call('Construyendo índice espacial para snapping...');
+      final swGrid = Stopwatch()..start();
+      spatialGrid = EdgeSpatialGrid(graph!);
+      router = AstarRouter(graph: graph!, spatialGrid: spatialGrid!);
+      adaptiveSearch = AdaptiveWaterPointSearch(router!);
+      swGrid.stop();
+      coldStartTimestamps['T5_SPATIAL_GRID_READY'] = swGrid.elapsedMilliseconds;
+    } catch (e) {
+      // On web, downloading 32MB binary over HTTP may time out or fail.
+      // The map and points still render cleanly even without local routing.
+      // ignore: avoid_print
+      print('Aviso: Grafo peatonal offline (32MB) no cargado en navegador: $e');
+    }
 
     coldStartTimestamps['T1_ENGINE_READY'] = swTotal.elapsedMilliseconds;
     _isInitialized = true;

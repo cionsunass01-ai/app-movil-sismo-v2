@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../models/water_point.dart';
 
 enum CatalogStatus { uninitialized, available, unavailable }
@@ -33,7 +34,7 @@ class LocalWaterPointCatalogRepository {
       String jsonStr;
 
       // In Flutter test runner, read synchronously from disk to avoid FakeAsync deadlocks
-      if (Platform.environment.containsKey('FLUTTER_TEST')) {
+      if (!kIsWeb && Platform.environment.containsKey('FLUTTER_TEST')) {
         final diskFile = File(assetPath);
         if (diskFile.existsSync()) {
           jsonStr = diskFile.readAsStringSync();
