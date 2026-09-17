@@ -111,46 +111,109 @@
     rejectInstance = reject;
   });
 
-  let toastElement = null;
-  function updateStatusToast(htmlContent, autoHide) {
-    if (!toastElement) {
-      toastElement = document.createElement('div');
-      toastElement.id = 'aguacion-offline-pill';
-      toastElement.style.cssText = [
+  const ICONS = {
+    download: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:block;">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+      <polyline points="7 10 12 15 17 10"></polyline>
+      <line x1="12" y1="15" x2="12" y2="3"></line>
+    </svg>`,
+    check: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:block;">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>`,
+    database: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:block;">
+      <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+    </svg>`,
+    alert: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:block;">
+      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+      <line x1="12" y1="9" x2="12" y2="13"></line>
+      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+    </svg>`
+  };
+
+  let onboardingCard = null;
+  let autoHideTimeout = null;
+
+  function showOnboardingProgress({ icon, title, subtitle, progress, showBar, barColor, autoHideMs }) {
+    if (!onboardingCard) {
+      onboardingCard = document.createElement('div');
+      onboardingCard.id = 'aguacion-onboarding-precarga';
+      onboardingCard.style.cssText = [
         'position: fixed',
-        'bottom: 74px',
+        'bottom: 76px',
         'left: 50%',
-        'transform: translateX(-50%)',
-        'background: rgba(15, 23, 42, 0.92)',
+        'transform: translateX(-50%) translateY(20px)',
+        'width: calc(100% - 32px)',
+        'max-width: 420px',
+        'background: rgba(15, 23, 42, 0.95)',
+        'border: 1px solid rgba(51, 65, 85, 0.85)',
+        'border-radius: 14px',
+        'padding: 12px 16px',
+        'box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35)',
+        'font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
         'color: #ffffff',
-        'padding: 7px 16px',
-        'border-radius: 24px',
-        'font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-        'font-size: 11.5px',
-        'font-weight: 600',
-        'box-shadow: 0 4px 14px rgba(0,0,0,0.22)',
         'z-index: 99999',
         'pointer-events: none',
-        'transition: opacity 0.35s ease, transform 0.35s ease',
-        'display: flex',
-        'align-items: center',
-        'gap: 8px',
-        'backdrop-filter: blur(8px)',
-        '-webkit-backdrop-filter: blur(8px)'
+        'opacity: 0',
+        'transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+        'backdrop-filter: blur(12px)',
+        '-webkit-backdrop-filter: blur(12px)',
+        'box-sizing: border-box'
       ].join(';');
-      document.body.appendChild(toastElement);
+      document.body.appendChild(onboardingCard);
     }
-    toastElement.innerHTML = htmlContent;
-    toastElement.style.opacity = '1';
-    toastElement.style.transform = 'translateX(-50%) translateY(0)';
 
-    if (autoHide) {
-      setTimeout(() => {
-        if (toastElement) {
-          toastElement.style.opacity = '0';
-          toastElement.style.transform = 'translateX(-50%) translateY(10px)';
+    if (autoHideTimeout) {
+      clearTimeout(autoHideTimeout);
+      autoHideTimeout = null;
+    }
+
+    const pct = Math.max(0, Math.min(100, Math.round(progress || 0)));
+    const iconSvg = ICONS[icon] || ICONS.download;
+    const progressFill = barColor || 'linear-gradient(90deg, #0284c7 0%, #38bdf8 100%)';
+
+    onboardingCard.innerHTML = `
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1;">
+          <div style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(51, 65, 85, 0.6); flex-shrink: 0;">
+            ${iconSvg}
+          </div>
+          <div style="display: flex; flex-direction: column; min-width: 0; flex: 1;">
+            <div style="font-size: 12.5px; font-weight: 700; color: #f8fafc; letter-spacing: -0.01em; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              ${title}
+            </div>
+            <div style="font-size: 11px; font-weight: 500; color: #94a3b8; line-height: 1.3; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              ${subtitle}
+            </div>
+          </div>
+        </div>
+        ${showBar ? `
+          <div style="font-size: 13px; font-weight: 800; color: #38bdf8; font-variant-numeric: tabular-nums; flex-shrink: 0; letter-spacing: -0.02em;">
+            ${pct}%
+          </div>
+        ` : ''}
+      </div>
+      ${showBar ? `
+        <div style="margin-top: 10px; width: 100%; height: 5px; background: #334155; border-radius: 9999px; overflow: hidden;">
+          <div style="width: ${pct}%; height: 100%; background: ${progressFill}; border-radius: 9999px; transition: width 0.2s ease-out;"></div>
+        </div>
+      ` : ''}
+    `;
+
+    requestAnimationFrame(() => {
+      onboardingCard.style.opacity = '1';
+      onboardingCard.style.transform = 'translateX(-50%) translateY(0)';
+    });
+
+    if (autoHideMs && autoHideMs > 0) {
+      autoHideTimeout = setTimeout(() => {
+        if (onboardingCard) {
+          onboardingCard.style.opacity = '0';
+          onboardingCard.style.transform = 'translateX(-50%) translateY(14px)';
         }
-      }, 3500);
+      }, autoHideMs);
     }
   }
 
@@ -158,7 +221,13 @@
   async function downloadAndCachePmtiles() {
     window.aguacionMapStatus.isLoading = true;
     window.dispatchEvent(new CustomEvent('aguacion_map_status_change', { detail: window.aguacionMapStatus }));
-    updateStatusToast('📥 Guardando mapa offline de Lima (10.6 MB)... 0%', false);
+    showOnboardingProgress({
+      icon: 'download',
+      title: 'Precarga de Cartografía Offline',
+      subtitle: 'Descargando mapa vectorial de Lima (10.6 MB)',
+      progress: 0,
+      showBar: true
+    });
 
     try {
       const fullUrl = new URL(ASSET_PMTILES_REL_PATH, document.baseURI).toString();
@@ -184,7 +253,13 @@
         const pct = Math.min(100, Math.round((loadedBytes / totalBytes) * 100));
         window.aguacionMapStatus.progress = pct;
         window.dispatchEvent(new CustomEvent('aguacion_map_progress', { detail: window.aguacionMapStatus }));
-        updateStatusToast('📥 Guardando mapa offline de Lima: ' + pct + '%', false);
+        showOnboardingProgress({
+          icon: 'download',
+          title: 'Precarga de Cartografía Offline',
+          subtitle: 'Descargando mapa vectorial de Lima (10.6 MB)',
+          progress: pct,
+          showBar: true
+        });
       }
 
       const blob = new Blob(chunks, { type: 'application/octet-stream' });
@@ -196,14 +271,28 @@
       window.aguacionMapStatus.source = 'network';
 
       console.log('[PMTiles Offline] PMTiles archive stored in IndexedDB (' + (blob.size / (1024 * 1024)).toFixed(1) + ' MB)');
-      updateStatusToast('✅ Mapa guardado: 100% listo para emergencias sin internet', true);
+      showOnboardingProgress({
+        icon: 'check',
+        title: 'Cartografía Offline Lista',
+        subtitle: '10.6 MB almacenados para emergencias sin internet',
+        progress: 100,
+        showBar: true,
+        barColor: '#10b981',
+        autoHideMs: 3500
+      });
       window.dispatchEvent(new CustomEvent('aguacion_map_ready', { detail: window.aguacionMapStatus }));
       return blob;
     } catch (err) {
       console.error('[PMTiles Offline] Download error:', err);
       window.aguacionMapStatus.isLoading = false;
       window.aguacionMapStatus.error = err.message;
-      updateStatusToast('⚠️ No se pudo guardar el mapa offline', true);
+      showOnboardingProgress({
+        icon: 'alert',
+        title: 'Precarga Pendiente',
+        subtitle: 'Conéctate a internet para guardar el mapa de Lima',
+        showBar: false,
+        autoHideMs: 4000
+      });
       window.dispatchEvent(new CustomEvent('aguacion_map_error', { detail: window.aguacionMapStatus }));
       throw err;
     }
@@ -218,7 +307,13 @@
       window.aguacionMapStatus.isLoading = false;
       window.aguacionMapStatus.progress = 100;
       window.aguacionMapStatus.source = 'indexeddb';
-      updateStatusToast('🟢 Mapa offline listo en dispositivo', true);
+      showOnboardingProgress({
+        icon: 'database',
+        title: 'Cartografía Local Verificada',
+        subtitle: 'Mapa vectorial activo en memoria del dispositivo',
+        showBar: false,
+        autoHideMs: 2200
+      });
       window.dispatchEvent(new CustomEvent('aguacion_map_ready', { detail: window.aguacionMapStatus }));
     } else {
       if (navigator.onLine) {
