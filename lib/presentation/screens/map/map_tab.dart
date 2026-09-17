@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:maplibre_gl/maplibre_gl.dart' hide UserLocation;
@@ -698,11 +699,12 @@ class _MapTabState extends State<MapTab> {
                 'No se pudo cargar el mapa offline',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
               ),
-              const SizedBox(height: 6),
-              const Text(
-                'Compruebe que el archivo PMTiles esté disponible en el almacenamiento local.',
+              Text(
+                kIsWeb
+                    ? 'Para usar el mapa sin internet, se requiere una primera descarga de 10 MB con conexión. Una vez guardado en la memoria de tu celular, estará disponible 100% offline.'
+                    : 'Compruebe que el archivo PMTiles esté disponible en el almacenamiento local.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12.5, color: AppColors.slate600),
+                style: const TextStyle(fontSize: 12.5, color: AppColors.slate600),
               ),
               const SizedBox(height: 16),
               ElevatedButton.icon(

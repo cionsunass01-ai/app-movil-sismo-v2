@@ -41,21 +41,27 @@
     For more details:
     * https://docs.flutter.dev/platform-integration/web/initialization
   -->
-  <!-- MapLibre GL JS -->
-  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
-  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <!-- Local MapLibre GL JS & CSS (Offline, no CDN dependency) -->
+  <link href="maplibre-gl.css" rel="stylesheet" />
+  <script src="maplibre-gl.js"></script>
   
-  <!-- PMTiles JS -->
-  <script src="https://unpkg.com/pmtiles@2.11.0/dist/index.js"></script>
+  <!-- Local PMTiles JS (Offline) -->
+  <script src="pmtiles.js"></script>
+
+  <!-- PMTiles Offline IndexedDB Adapter -->
+  <script src="pmtiles_offline.js"></script>
   
   <script>
-    // Register PMTiles protocol immediately since we now load MapLibre explicitly above
-    window.addEventListener('load', function() {
-      if (window.maplibregl && window.pmtiles) {
-        const protocol = new pmtiles.Protocol();
-        window.maplibregl.addProtocol("pmtiles", protocol.tile);
-      }
-    });
+    // Register custom offline Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sw.js').then(function(reg) {
+          console.log('[Aguacion PWA] ServiceWorker registered with scope:', reg.scope);
+        }).catch(function(err) {
+          console.warn('[Aguacion PWA] ServiceWorker registration failed:', err);
+        });
+      });
+    }
 
     // PWA Install Prompt handler
     window.deferredPwaPrompt = null;
