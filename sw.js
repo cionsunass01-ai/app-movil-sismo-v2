@@ -5,7 +5,7 @@
  * fonts, styles, and map libraries.
  */
 
-const CACHE_NAME = 'aguacion-pwa-v3';
+const CACHE_NAME = 'aguacion-pwa-v5';
 
 const PRECACHE_ASSETS = [
   './',
@@ -24,16 +24,16 @@ const PRECACHE_ASSETS = [
   'icons/Icon-512.png',
   'assets/FontManifest.json',
   'assets/AssetManifest.bin.json',
-  'assets/assets/poc/data/water_points_normalized.json',
-  'assets/assets/poc/styles/emergency_geometric_style.json',
-  'assets/assets/poc/fonts/Noto%20Sans%20Regular/0-255.pbf',
-  'assets/assets/poc/fonts/Noto%20Sans%20Regular/256-511.pbf',
-  'assets/assets/poc/fonts/Noto%20Sans%20Bold/0-255.pbf',
-  'assets/assets/poc/fonts/Noto%20Sans%20Bold/256-511.pbf',
-  'assets/assets/poc/fonts/Noto Sans Regular/0-255.pbf',
-  'assets/assets/poc/fonts/Noto Sans Regular/256-511.pbf',
-  'assets/assets/poc/fonts/Noto Sans Bold/0-255.pbf',
-  'assets/assets/poc/fonts/Noto Sans Bold/256-511.pbf'
+  'assets/poc/data/water_points_normalized.json',
+  'assets/poc/styles/emergency_geometric_style.json',
+  'assets/poc/fonts/Noto%20Sans%20Regular/0-255.pbf',
+  'assets/poc/fonts/Noto%20Sans%20Regular/256-511.pbf',
+  'assets/poc/fonts/Noto%20Sans%20Bold/0-255.pbf',
+  'assets/poc/fonts/Noto%20Sans%20Bold/256-511.pbf',
+  'assets/poc/fonts/Noto Sans Regular/0-255.pbf',
+  'assets/poc/fonts/Noto Sans Regular/256-511.pbf',
+  'assets/poc/fonts/Noto Sans Bold/0-255.pbf',
+  'assets/poc/fonts/Noto Sans Bold/256-511.pbf'
 ];
 
 self.addEventListener('install', (event) => {
@@ -46,7 +46,7 @@ self.addEventListener('install', (event) => {
           fetch(url)
             .then((response) => {
               if (response.ok) {
-                return cache.put(url, response);
+                return cache.put(url, response).catch(() => {});
               }
             })
             .catch((err) => {
@@ -84,8 +84,23 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Handle asset path duality between Flutter dev server (/assets/poc/) and release build (/assets/assets/poc/)
+  if (url.pathname.includes('/assets/assets/poc/')) {
+    const fallbackPath = url.pathname.replace('/assets/assets/poc/', '/assets/poc/');
+    const fallbackUrl = new URL(fallbackPath, url.origin).toString();
+    event.respondWith(
+      caches.match(request, { ignoreSearch: true }).then((cached) => {
+        if (cached) return cached;
+        return fetch(request).then((res) => {
+          if (res.ok) return res;
+          return fetch(fallbackUrl);
+        }).catch(() => fetch(fallbackUrl));
+      })
+    );
+    return;
+  }
+
   // PMTiles Range requests are handled in-memory by pmtiles_offline.js LocalBlobSource
-  // but if a full fetch of the pmtiles file happens, allow network caching
   event.respondWith(
     caches.match(request, { ignoreSearch: true }).then((cachedResponse) => {
       if (cachedResponse) {
@@ -97,8 +112,10 @@ self.addEventListener('fetch', (event) => {
         if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
           // Do not cache the 10MB PMTiles file in Cache Storage because it is already in IndexedDB
           if (!url.pathname.endsWith('.pmtiles')) {
-            const copy = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+            try {
+              const copy = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(request, copy).catch(() => {}));
+            } catch (_) {}
           }
         }
         return networkResponse;
