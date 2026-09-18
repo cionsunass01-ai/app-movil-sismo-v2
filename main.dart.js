@@ -31080,8 +31080,8 @@ m=B.b0
 s=3
 return A.t($.kp().ER("assets/poc/styles/emergency_geometric_style.json"),$async$ajG)
 case 3:p=n.a(m.dN(b))
-J.bd(J.k(p.h(0,"sources"),"lima_callao"),"url","pmtiles://assets/poc/maps/lima_callao_z14.pmtiles")
-p.l(0,"glyphs","assets/poc/fonts/{fontstack}/{range}.pbf")
+J.bd(J.k(p.h(0,"sources"),"lima_callao"),"url","pmtiles://assets/assets/poc/maps/lima_callao_z14.pmtiles")
+p.l(0,"glyphs","assets/assets/poc/fonts/{fontstack}/{range}.pbf")
 q=$.aOx=B.b0.n9(p)
 s=1
 break

@@ -5,7 +5,7 @@
  * fonts, styles, and map libraries.
  */
 
-const CACHE_NAME = 'aguacion-pwa-v5';
+const CACHE_NAME = 'aguacion-pwa-v6';
 
 const PRECACHE_ASSETS = [
   './',
@@ -24,16 +24,16 @@ const PRECACHE_ASSETS = [
   'icons/Icon-512.png',
   'assets/FontManifest.json',
   'assets/AssetManifest.bin.json',
-  'assets/poc/data/water_points_normalized.json',
-  'assets/poc/styles/emergency_geometric_style.json',
-  'assets/poc/fonts/Noto%20Sans%20Regular/0-255.pbf',
-  'assets/poc/fonts/Noto%20Sans%20Regular/256-511.pbf',
-  'assets/poc/fonts/Noto%20Sans%20Bold/0-255.pbf',
-  'assets/poc/fonts/Noto%20Sans%20Bold/256-511.pbf',
-  'assets/poc/fonts/Noto Sans Regular/0-255.pbf',
-  'assets/poc/fonts/Noto Sans Regular/256-511.pbf',
-  'assets/poc/fonts/Noto Sans Bold/0-255.pbf',
-  'assets/poc/fonts/Noto Sans Bold/256-511.pbf'
+  'assets/assets/poc/data/water_points_normalized.json',
+  'assets/assets/poc/styles/emergency_geometric_style.json',
+  'assets/assets/poc/fonts/Noto%20Sans%20Regular/0-255.pbf',
+  'assets/assets/poc/fonts/Noto%20Sans%20Regular/256-511.pbf',
+  'assets/assets/poc/fonts/Noto%20Sans%20Bold/0-255.pbf',
+  'assets/assets/poc/fonts/Noto%20Sans%20Bold/256-511.pbf',
+  'assets/assets/poc/fonts/Noto Sans Regular/0-255.pbf',
+  'assets/assets/poc/fonts/Noto Sans Regular/256-511.pbf',
+  'assets/assets/poc/fonts/Noto Sans Bold/0-255.pbf',
+  'assets/assets/poc/fonts/Noto Sans Bold/256-511.pbf'
 ];
 
 self.addEventListener('install', (event) => {
@@ -84,17 +84,32 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Handle asset path duality between Flutter dev server (/assets/poc/) and release build (/assets/assets/poc/)
-  if (url.pathname.includes('/assets/assets/poc/')) {
-    const fallbackPath = url.pathname.replace('/assets/assets/poc/', '/assets/poc/');
-    const fallbackUrl = new URL(fallbackPath, url.origin).toString();
+  // Handle bidirectional asset path duality between dev server and release build
+  if (url.pathname.includes('/assets/poc/fonts/')) {
+    const doublePath = url.pathname.replace('/assets/poc/fonts/', '/assets/assets/poc/fonts/');
+    const doubleUrl = new URL(doublePath, url.origin).toString();
     event.respondWith(
       caches.match(request, { ignoreSearch: true }).then((cached) => {
         if (cached) return cached;
         return fetch(request).then((res) => {
           if (res.ok) return res;
-          return fetch(fallbackUrl);
-        }).catch(() => fetch(fallbackUrl));
+          return fetch(doubleUrl);
+        }).catch(() => fetch(doubleUrl));
+      })
+    );
+    return;
+  }
+
+  if (url.pathname.includes('/assets/assets/poc/fonts/')) {
+    const singlePath = url.pathname.replace('/assets/assets/poc/fonts/', '/assets/poc/fonts/');
+    const singleUrl = new URL(singlePath, url.origin).toString();
+    event.respondWith(
+      caches.match(request, { ignoreSearch: true }).then((cached) => {
+        if (cached) return cached;
+        return fetch(request).then((res) => {
+          if (res.ok) return res;
+          return fetch(singleUrl);
+        }).catch(() => fetch(singleUrl));
       })
     );
     return;
