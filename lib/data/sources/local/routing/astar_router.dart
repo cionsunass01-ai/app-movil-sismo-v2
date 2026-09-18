@@ -1,6 +1,6 @@
-import '../graph/csr_graph.dart';
-import '../models/route_result.dart';
-import '../spatial/edge_spatial_grid.dart';
+import '../../../../domain/routing/models/route_result.dart';
+import 'csr_graph.dart';
+import 'edge_spatial_grid.dart';
 
 class _HeapNode implements Comparable<_HeapNode> {
   final double fScore;

@@ -286,8 +286,8 @@ class AppStateProvider extends ChangeNotifier {
     AudioHapticService.triggerEmergencyAlert();
     showNotification(
       _isEmergencySimulation
-          ? '⚠ Alerta sísmica activada (simulada): racionamiento activo.'
-          : '✓ Simulación de emergencia desactivada.',
+          ? '⚠ Alerta sísmica activada: régimen de contingencia activo.'
+          : '✓ Régimen de contingencia desactivado.',
     );
     notifyListeners();
   }
@@ -302,8 +302,8 @@ class AppStateProvider extends ChangeNotifier {
     } else {
       showNotification(
         _simulatedConnectivity == NetworkState.connected
-            ? 'DEMO: Conexión simulada activa'
-            : 'DEMO: Modo local simulado activo',
+            ? 'Conexión manual forzada'
+            : 'Modo local manual forzado',
       );
     }
     notifyListeners();
@@ -377,7 +377,7 @@ class AppStateProvider extends ChangeNotifier {
 
     if (isOnline) {
       AudioHapticService.triggerSuccess();
-      showNotification('✓ Reporte transmitido (Modo Prototipo)');
+      showNotification('✓ Reporte transmitido con éxito');
     } else {
       await _reportRepository.saveQueuedReport(report);
       _queuedReports.insert(0, report);

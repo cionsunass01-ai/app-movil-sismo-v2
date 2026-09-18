@@ -43,7 +43,7 @@ class EmergencyBanner extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Text(
-                    "DEMO",
+                    "ALERTA",
                     style: TextStyle(
                       color: AppColors.white,
                       fontSize: 9.5,
@@ -59,7 +59,7 @@ class EmergencyBanner extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        "MODO DEMOSTRACIÓN — Simulación de Emergencia",
+                        "RÉGIMEN DE CONTINGENCIA SÍSMICA",
                         style: TextStyle(
                           color: AppColors.white,
                           fontSize: 11.5,
@@ -69,7 +69,7 @@ class EmergencyBanner extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        "Simulación activa: confirmación operativa en terreno hasta 48 h post-sismo.",
+                        "Protocolo activo: confirmación física de puntos hasta 48 h post-sismo.",
                         style: TextStyle(
                           color: Color(0xFFFECACA),
                           fontSize: 10,
@@ -86,7 +86,7 @@ class EmergencyBanner extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(LucideIcons.x, size: 14, color: AppColors.white),
-            tooltip: "Finalizar simulación",
+            tooltip: "Cerrar aviso",
             visualDensity: VisualDensity.compact,
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(minWidth: 28, minHeight: 28),

@@ -1,8 +1,8 @@
 import 'dart:math';
-import '../graph/csr_graph.dart';
-import '../models/route_result.dart';
-import '../routing/astar_router.dart';
-import '../spatial/edge_spatial_grid.dart';
+import '../../../../domain/routing/models/route_result.dart';
+import 'csr_graph.dart';
+import 'astar_router.dart';
+import 'edge_spatial_grid.dart';
 
 class BenchmarkItemResult {
   final String name;

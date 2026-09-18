@@ -8,13 +8,12 @@ import 'package:maplibre_gl/maplibre_gl.dart' hide UserLocation;
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/geo_utils.dart';
-import '../../../poc/offline_navigation/models/gnss_state.dart';
-import '../../../poc/offline_navigation/models/route_result.dart';
-import '../../../poc/offline_navigation/services/offline_location_service.dart';
-import '../../../poc/offline_navigation/services/offline_routing_engine.dart';
+import '../../../domain/location/models/gnss_state.dart';
+import '../../../domain/routing/models/route_result.dart';
+import '../../../data/repositories/local_location_repository.dart';
+import '../../../data/repositories/local_routing_repository.dart';
 import '../../../data/models/user_location.dart';
 import '../../providers/app_state_provider.dart';
-import '../../widgets/demo_tools_modal.dart';
 import '../../widgets/location_permission_modal.dart';
 import 'widgets/water_point_map_sheet.dart';
 
@@ -26,7 +25,8 @@ class MapTab extends StatefulWidget {
 }
 
 class _MapTabState extends State<MapTab> {
-  final _engine = OfflineRoutingEngine.instance;
+  final _engine = LocalRoutingRepository.instance;
+  final _locationService = LocalLocationRepository();
 
   // Neutral fallback: Centro de Lima (Plaza Mayor / Metropolitano)
   static const LatLng kNeutralLimaCenter = LatLng(-12.0464, -77.0428);
@@ -76,7 +76,7 @@ class _MapTabState extends State<MapTab> {
     if (!mounted) return;
     setState(() => _isLocating = true);
 
-    final pos = await OfflineLocationService.acquirePosition(
+    final pos = await _locationService.acquirePosition(
       timeoutSeconds: 5,
       requestIfNotGranted: false,
     );
@@ -265,7 +265,7 @@ class _MapTabState extends State<MapTab> {
 
   Future<void> _refreshLocation() async {
     setState(() => _isLocating = true);
-    final pos = await OfflineLocationService.acquirePosition(timeoutSeconds: 8);
+    final pos = await _locationService.acquirePosition(timeoutSeconds: 8);
     if (!mounted) return;
 
     final bool hasValidPosition =
@@ -924,17 +924,6 @@ class _MapTabState extends State<MapTab> {
                         ),
                       )
                     : const Icon(LucideIcons.locateFixed, size: 19),
-              ),
-              const SizedBox(height: 8),
-
-              // Discrete Demo Tools button
-              FloatingActionButton.small(
-                heroTag: 'map_tools_btn',
-                onPressed: () => DemoToolsModal.show(context),
-                backgroundColor: AppColors.white,
-                foregroundColor: AppColors.slate700,
-                elevation: 3,
-                child: const Icon(LucideIcons.slidersHorizontal, size: 18),
               ),
             ],
           ),

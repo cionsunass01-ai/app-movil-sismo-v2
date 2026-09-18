@@ -1,6 +1,7 @@
 import '../../core/utils/geo_utils.dart';
 import '../../data/models/water_point.dart';
-import '../../poc/offline_navigation/services/offline_routing_engine.dart';
+import '../routing/repositories/routing_repository.dart';
+import '../../data/repositories/local_routing_repository.dart';
 
 /// Service that ranks water points by proximity from the user's real location.
 ///
@@ -8,10 +9,10 @@ import '../../poc/offline_navigation/services/offline_routing_engine.dart';
 /// Lima/Callao catalog, and computes exact pedestrian network routes (A* via CSR
 /// graph with 50 m edge snapping) for the closest candidates without blocking UI.
 class NearbyWaterPointsService {
-  final OfflineRoutingEngine _routingEngine;
+  final RoutingRepository _routingEngine;
 
-  NearbyWaterPointsService({OfflineRoutingEngine? routingEngine})
-    : _routingEngine = routingEngine ?? OfflineRoutingEngine.instance;
+  NearbyWaterPointsService({RoutingRepository? routingEngine})
+    : _routingEngine = routingEngine ?? LocalRoutingRepository.instance;
 
   /// Fast geodetic pre-filter using Haversine formula.
   ///

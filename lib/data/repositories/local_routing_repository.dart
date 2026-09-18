@@ -1,36 +1,46 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import '../benchmarks/dart_routing_benchmark.dart';
-import '../graph/csr_graph.dart';
-import '../models/route_result.dart';
-import '../routing/astar_router.dart';
-import '../routing/adaptive_water_point_search.dart';
-import '../spatial/edge_spatial_grid.dart';
-import 'pmtiles_manager.dart';
+import '../../domain/routing/models/route_result.dart';
+import '../../domain/routing/models/snap_result.dart';
+import '../../domain/routing/repositories/routing_repository.dart';
+import '../sources/local/maps/pmtiles_manager.dart';
+import '../sources/local/routing/adaptive_water_point_search.dart';
+import '../sources/local/routing/astar_router.dart';
+import '../sources/local/routing/csr_graph.dart';
+import '../sources/local/routing/edge_spatial_grid.dart';
 
-/// Singleton manager for the validated offline pedestrian routing engine.
+/// Singleton concrete implementation of [RoutingRepository].
 ///
 /// Keeps the in-memory CSR graph (855k nodes, 1.99M edges), Spatial Grid,
 /// and normalized water point dataset in memory to guarantee instant
 /// calculations (< 5 ms) across the entire citizen application.
-class OfflineRoutingEngine {
-  static OfflineRoutingEngine? _instance;
-  static OfflineRoutingEngine get instance =>
-      _instance ??= OfflineRoutingEngine._();
+class LocalRoutingRepository implements RoutingRepository {
+  static LocalRoutingRepository? _instance;
+  static LocalRoutingRepository get instance =>
+      _instance ??= LocalRoutingRepository._();
 
-  OfflineRoutingEngine._();
+  LocalRoutingRepository._();
 
   bool _isInitialized = false;
+
+  @override
   bool get isInitialized => _isInitialized;
 
+  @override
   String? styleString;
+
   CsrGraph? graph;
   EdgeSpatialGrid? spatialGrid;
   AstarRouter? router;
   AdaptiveWaterPointSearch? adaptiveSearch;
+
+  @override
   List<Map<String, dynamic>> waterPoints = [];
+
+  @override
   final Map<String, int> coldStartTimestamps = {};
 
+  @override
   Future<void> ensureInitialized({
     void Function(String message)? onProgress,
   }) async {
@@ -94,7 +104,7 @@ class OfflineRoutingEngine {
     _isInitialized = true;
   }
 
-  /// Finds the optimal nearest water point and calculates the pedestrian route
+  @override
   AdaptiveSearchResult? searchNearest({
     required double originLat,
     required double originLon,
@@ -114,7 +124,7 @@ class OfflineRoutingEngine {
     );
   }
 
-  /// Computes a pedestrian route to a specific destination point
+  @override
   RouteResult? routeToPoint({
     required double originLat,
     required double originLon,
@@ -137,21 +147,19 @@ class OfflineRoutingEngine {
     );
   }
 
-  /// Runs the 30-route Dart benchmark suite and returns human-readable summaries
-  List<BenchmarkCategorySummary> runBenchmarks() {
-    if (!_isInitialized ||
-        router == null ||
-        graph == null ||
-        spatialGrid == null) {
-      return [];
+  @override
+  SnapResult snapToSegment(
+    double lat,
+    double lon, {
+    double thresholdMeters = 50.0,
+  }) {
+    if (!_isInitialized || spatialGrid == null) {
+      return SnapResult.notFound(
+        lat: lat,
+        lon: lon,
+        thresholdMeters: thresholdMeters,
+      );
     }
-
-    final bench = DartRoutingBenchmark(
-      graph: graph!,
-      spatialGrid: spatialGrid!,
-      router: router!,
-    );
-    final results = bench.runSuite();
-    return DartRoutingBenchmark.computeSummaries(results);
+    return spatialGrid!.snapToSegment(lat, lon, thresholdMeters: thresholdMeters);
   }
 }

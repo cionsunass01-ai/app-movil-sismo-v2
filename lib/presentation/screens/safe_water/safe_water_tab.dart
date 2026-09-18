@@ -128,26 +128,25 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Row(
-                    children: [
-                      Icon(
-                        LucideIcons.droplet,
-                        color: AppColors.accentBlue,
-                        size: 18,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Calculadora de Reserva Familiar',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.slate900,
-                        ),
-                      ),
-                    ],
+                  const Icon(
+                    LucideIcons.droplet,
+                    color: AppColors.accentBlue,
+                    size: 18,
                   ),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text(
+                      'Calculadora de Reserva Familiar',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.slate900,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 7,
@@ -252,48 +251,59 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${totalWaterNeeded.toInt()} L',
-                          style: const TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w900,
-                            color: AppColors.white,
-                            fontFamily: 'monospace',
-                            letterSpacing: -0.5,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${totalWaterNeeded.toInt()} L',
+                            style: const TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w900,
+                              color: AppColors.white,
+                              fontFamily: 'monospace',
+                              letterSpacing: -0.5,
+                            ),
                           ),
-                        ),
-                        const Text(
-                          'Volumen total requerido',
-                          style: TextStyle(
-                            fontSize: 10.5,
-                            color: AppColors.slate400,
+                          const Text(
+                            'Volumen total requerido',
+                            style: TextStyle(
+                              fontSize: 10.5,
+                              color: AppColors.slate400,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          '$jugs20L ${jugs20L > 1 ? 'bidones' : 'bidón'}',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w900,
-                            color: Color(0xFFFDE047),
-                            fontFamily: 'monospace',
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            '$jugs20L ${jugs20L > 1 ? 'bidones' : 'bidón'}',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0xFFFDE047),
+                              fontFamily: 'monospace',
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                        const Text(
-                          'De 20 litros cada uno',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: AppColors.slate400,
+                          const Text(
+                            'De 20 litros cada uno',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: AppColors.slate400,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -316,26 +326,25 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Row(
-                    children: [
-                      Icon(
-                        LucideIcons.shieldCheck,
-                        color: AppColors.safeGreen,
-                        size: 18,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Desinfección Segura con Lejía',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.slate900,
-                        ),
-                      ),
-                    ],
+                  const Icon(
+                    LucideIcons.shieldCheck,
+                    color: AppColors.safeGreen,
+                    size: 18,
                   ),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text(
+                      'Desinfección Segura con Lejía',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.slate900,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 7,
@@ -361,16 +370,19 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
 
               // Volume Slider
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Volumen del recipiente:',
-                    style: TextStyle(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.slate800,
+                  const Expanded(
+                    child: Text(
+                      'Volumen del recipiente:',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.slate800,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
+                  const SizedBox(width: 8),
                   Text(
                     '${_volumeLiters.toInt()} Litros',
                     style: const TextStyle(
@@ -488,43 +500,46 @@ class _SafeWaterTabState extends State<SafeWaterTab> {
                 child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${bleachMl.toStringAsFixed(1).replaceAll('.', ',')} mL',
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w900,
-                                color: AppColors.white,
-                                fontFamily: 'monospace',
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${bleachMl.toStringAsFixed(1).replaceAll('.', ',')} mL',
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w900,
+                                  color: AppColors.white,
+                                  fontFamily: 'monospace',
+                                ),
                               ),
-                            ),
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  const TextSpan(
-                                    text: 'Aproximadamente ',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Color(0xFFA7F3D0),
+                              RichText(
+                                text: TextSpan(
+                                  children: [
+                                    const TextSpan(
+                                      text: 'Aproximadamente ',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Color(0xFFA7F3D0),
+                                      ),
                                     ),
-                                  ),
-                                  TextSpan(
-                                    text: '$bleachDrops gotas',
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900,
-                                      color: Color(0xFFFDE047),
+                                    TextSpan(
+                                      text: '$bleachDrops gotas',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w900,
+                                        color: Color(0xFFFDE047),
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
+                        const SizedBox(width: 8),
                         ElevatedButton.icon(
                           onPressed: _copyDisinfectionProtocol,
                           icon: Icon(
@@ -601,27 +616,35 @@ class _StepperRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.slate800,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.slate800,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              Text(
-                subtitle,
-                style: const TextStyle(
-                  fontSize: 9.5,
-                  color: AppColors.slate500,
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    fontSize: 9.5,
+                    color: AppColors.slate500,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
+          const SizedBox(width: 8),
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               IconButton.filledTonal(
                 onPressed: onDecrement,

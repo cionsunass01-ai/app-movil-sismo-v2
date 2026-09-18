@@ -4,7 +4,6 @@ import "package:provider/provider.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
 import "../../../core/constants/app_colors.dart";
 import "../../providers/app_state_provider.dart";
-import "../../widgets/demo_tools_modal.dart";
 import "../../widgets/pwa_install_prompt_modal.dart";
 
 class MoreTab extends StatelessWidget {
@@ -30,7 +29,7 @@ class MoreTab extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "AguaCION v2.0 (Prototipo Tecnológico)",
+              "AguaCION v2.0",
               style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5),
             ),
             SizedBox(height: 6),
@@ -49,7 +48,7 @@ class MoreTab extends StatelessWidget {
             ),
             SizedBox(height: 4),
             Text(
-              "Desarrollo técnico orientado a la Gestión del Riesgo de Desastres en contexto institucional SUNASS. Prototipo tecnológico sujeto a validación institucional.",
+              "Desarrollo orientado a la Gestión del Riesgo de Desastres en el marco institucional de SUNASS, para asegurar la orientación a la ciudadanía sobre fuentes de agua potable en situaciones de emergencia.",
               style: TextStyle(fontSize: 11, color: AppColors.slate500),
             ),
           ],
@@ -112,9 +111,9 @@ class MoreTab extends StatelessWidget {
           _OptionCard(
             icon: LucideIcons.send,
             iconColor: AppColors.sunassBlue,
-            title: "Reportar Incidencia (Demo)",
+            title: "Reportar Incidencia",
             subtitle:
-                "Flujo de reporte en demostración. La persistencia y sincronización productiva se implementarán en una fase posterior.",
+                "Registra incidencias de abastecimiento en tu zona para ser enviadas a los equipos técnicos en cuanto recuperes conexión.",
             onTap: () => state.setActiveTab(AppTab.reportar),
           ),
 
@@ -148,19 +147,8 @@ class MoreTab extends StatelessWidget {
             icon: LucideIcons.info,
             iconColor: AppColors.slate700,
             title: "Acerca de AguaCION",
-            subtitle: "Prototipo tecnológico en contexto institucional SUNASS.",
+            subtitle: "Información institucional y objetivos del aplicativo.",
             onTap: () => _showAboutDialog(context),
-          ),
-          const SizedBox(height: 10),
-
-          // 5. Herramientas de demostración
-          _OptionCard(
-            icon: LucideIcons.slidersHorizontal,
-            iconColor: const Color(0xFFD97706),
-            title: "Herramientas de Demostración",
-            subtitle:
-                "Benchmarks, simulación de cortes, pruebas de estrés y diagnóstico técnico.",
-            onTap: () => DemoToolsModal.show(context),
           ),
           const SizedBox(height: 20),
         ],

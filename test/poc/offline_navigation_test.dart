@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:aguacion_app/poc/offline_navigation/graph/csr_graph.dart';
-import 'package:aguacion_app/poc/offline_navigation/spatial/edge_spatial_grid.dart';
-import 'package:aguacion_app/poc/offline_navigation/routing/astar_router.dart';
-import 'package:aguacion_app/poc/offline_navigation/routing/adaptive_water_point_search.dart';
-import 'package:aguacion_app/poc/offline_navigation/models/snap_result.dart';
-import 'package:aguacion_app/poc/offline_navigation/models/route_result.dart';
+import 'package:aguacion_app/data/sources/local/routing/csr_graph.dart';
+import 'package:aguacion_app/data/sources/local/routing/edge_spatial_grid.dart';
+import 'package:aguacion_app/data/sources/local/routing/astar_router.dart';
+import 'package:aguacion_app/data/sources/local/routing/adaptive_water_point_search.dart';
+import 'package:aguacion_app/domain/routing/models/snap_result.dart';
+import 'package:aguacion_app/domain/routing/models/route_result.dart';
 
 void main() {
   group('Offline Navigation POC Core Engine Tests', () {

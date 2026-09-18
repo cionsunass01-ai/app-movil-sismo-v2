@@ -132,7 +132,7 @@ void main() {
       },
     );
 
-    testWidgets('5. MoreTab renders secondary services and Demo Tools access', (
+    testWidgets('5. MoreTab renders secondary services and official about dialog', (
       tester,
     ) async {
       await tester.pumpWidget(createTestApp(const MoreTab()));
@@ -141,7 +141,6 @@ void main() {
       expect(find.text('Mi Sector'), findsOneWidget);
       expect(find.textContaining('Reportar Incidencia'), findsOneWidget);
       expect(find.text('Acerca de AguaCION'), findsOneWidget);
-      expect(find.text('Herramientas de Demostración'), findsOneWidget);
     });
   });
 }

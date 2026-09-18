@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
-import '../models/gnss_state.dart';
+import '../../../../domain/location/models/gnss_state.dart';
+import '../../../../domain/location/repositories/location_repository.dart';
 
-class OfflineLocationService {
-  /// Attempts to obtain an offline GNSS position with progressive fallback:
-  /// 1. Immediately queries [getLastKnownPosition] for instant display.
-  /// 2. Attempts [getCurrentPosition] with a flexible timeout ([timeoutSeconds], default 30s).
-  /// 3. Returns explicit [GnssPosition] with state and accuracy metrics.
-  static Future<GnssPosition> acquirePosition({
+/// Concrete implementation of [LocationRepository] using the geolocator package
+/// to acquire GNSS positions from the device hardware sensor.
+class LocalLocationRepository implements LocationRepository {
+  @override
+  Future<GnssPosition> acquirePosition({
     int timeoutSeconds = 30,
     bool requestIfNotGranted = true,
     void Function(String progressMessage)? onProgress,

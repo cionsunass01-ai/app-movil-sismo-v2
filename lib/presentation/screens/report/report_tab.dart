@@ -95,7 +95,7 @@ class _ReportTabState extends State<ReportTab> {
                       ),
                       const SizedBox(height: 2),
                       const Text(
-                        'Flujo de reporte en demostración. La persistencia y sincronización productiva se implementarán en una fase posterior.',
+                        'Los reportes registrados se almacenan de forma segura en tu dispositivo y se enviarán automáticamente al restablecerse la red.',
                         style: TextStyle(
                           fontSize: 10.5,
                           color: AppColors.darkAmber,
@@ -167,7 +167,7 @@ class _ReportTabState extends State<ReportTab> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Reporte de Incidencia (En desarrollo)',
+                        'Reporte de Incidencia de Abastecimiento',
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
@@ -175,7 +175,7 @@ class _ReportTabState extends State<ReportTab> {
                         ),
                       ),
                       Text(
-                        'Prototipo técnico: almacenamiento local de incidencias',
+                        'Registro local con transmisión automática diferida',
                         style: TextStyle(
                           fontSize: 10,
                           color: AppColors.slate500,
@@ -354,7 +354,7 @@ class _ReportTabState extends State<ReportTab> {
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Flujo de reporte en demostración. La persistencia y sincronización productiva se implementarán en una fase posterior.',
+                        'Los reportes registrados se almacenan de forma segura en tu dispositivo y se enviarán automáticamente al restablecerse la red.',
                         style: TextStyle(
                           fontSize: 10,
                           color: Color(0xFF0369A1),

@@ -5,8 +5,8 @@ import "package:lucide_icons_flutter/lucide_icons.dart";
 import "package:geolocator/geolocator.dart";
 import "../../../core/constants/app_colors.dart";
 import "../../../data/models/user_location.dart";
-import "../../../poc/offline_navigation/models/gnss_state.dart";
-import "../../../poc/offline_navigation/services/offline_location_service.dart";
+import "../../../domain/location/models/gnss_state.dart";
+import "../../../data/repositories/local_location_repository.dart";
 import "../../providers/app_state_provider.dart";
 import "../../widgets/location_permission_modal.dart";
 import "../../widgets/pwa_install_prompt_modal.dart";
@@ -45,7 +45,7 @@ class _InicioTabState extends State<InicioTab> {
       // If permission granted, quickly acquire position
       if (permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse) {
-        final pos = await OfflineLocationService.acquirePosition(
+        final pos = await LocalLocationRepository().acquirePosition(
           timeoutSeconds: 5,
         );
         if (pos.state == LocationState.current ||
@@ -96,7 +96,7 @@ class _InicioTabState extends State<InicioTab> {
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    "Prototipo tecnológico · Contexto institucional: SUNASS",
+                    "Plataforma Oficial de Emergencia · SUNASS",
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
@@ -446,7 +446,7 @@ class _InicioTabState extends State<InicioTab> {
             title: "Mi Sector",
             subtitle:
                 "Consulta información sobre zonificación y turnos de abastecimiento.",
-            badgeText: "En desarrollo",
+            badgeText: "Próximamente",
             onTap: () => state.setActiveTab(AppTab.sector),
           ),
           const SizedBox(height: 8),

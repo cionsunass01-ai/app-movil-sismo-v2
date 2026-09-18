@@ -162,22 +162,6 @@ class HeaderBar extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: 4),
-                IconButton(
-                  icon: const Icon(
-                    LucideIcons.slidersHorizontal,
-                    size: 16,
-                    color: Color(0xFF94A3B8),
-                  ),
-                  tooltip: "Opciones de Demostración",
-                  visualDensity: VisualDensity.compact,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(
-                    minWidth: 32,
-                    minHeight: 32,
-                  ),
-                  onPressed: () => DemoToolsModal.show(context),
-                ),
               ],
             ),
           ],

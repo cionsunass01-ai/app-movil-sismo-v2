@@ -1,6 +1,6 @@
 import 'dart:math';
-import '../graph/csr_graph.dart';
-import '../models/snap_result.dart';
+import '../../../../domain/routing/models/snap_result.dart';
+import 'csr_graph.dart';
 
 class EdgeSpatialGrid {
   static const double cellSize = 0.0025; // ~275 meters

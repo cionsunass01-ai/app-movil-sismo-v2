@@ -3,26 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../core/constants/app_colors.dart';
 
-// Conditionally import dart:js_interop or stub
-// In flutter web we can use js eval or dart:js_interop
-import 'dart:js_interop' as js;
-
-@js.JS('promptPwaInstall')
-external js.JSPromise<js.JSString> _promptPwaInstall();
-
-@js.JS('isPwaStandalone')
-external js.JSBoolean _isPwaStandalone();
+import 'pwa_interop.dart' as pwa;
 
 class PwaInstallPromptModal extends StatelessWidget {
   const PwaInstallPromptModal({super.key});
 
   static bool get isAlreadyInstalled {
     if (!kIsWeb) return true;
-    try {
-      return _isPwaStandalone().toDart;
-    } catch (_) {
-      return false;
-    }
+    return pwa.isStandalone();
   }
 
   static Future<void> show(BuildContext context) {
@@ -37,9 +25,7 @@ class PwaInstallPromptModal extends StatelessWidget {
   static Future<void> triggerInstall(BuildContext context) async {
     if (!kIsWeb) return;
     try {
-      final promise = _promptPwaInstall();
-      final result = await promise.toDart;
-      final outcome = result.toDart;
+      final outcome = await pwa.promptInstall();
       if (outcome == 'accepted') {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

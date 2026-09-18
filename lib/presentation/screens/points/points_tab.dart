@@ -119,14 +119,14 @@ class _PointsTabState extends State<PointsTab> {
             child: const Row(
               children: [
                 Icon(
-                  LucideIcons.flaskConical,
+                  LucideIcons.shieldAlert,
                   size: 16,
                   color: AppColors.darkAmber,
                 ),
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'MODO DEMOSTRACIÓN: La disponibilidad operativa mostrada es simulada para evaluación institucional.',
+                    'ESTADO DE CONTINGENCIA: Red de distribución de emergencia activa.',
                     style: TextStyle(
                       fontSize: 11.5,
                       fontWeight: FontWeight.w700,

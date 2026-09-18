@@ -1,45 +1,7 @@
-import '../models/route_result.dart';
-import '../spatial/edge_spatial_grid.dart';
+import '../../../../domain/routing/models/route_result.dart';
+import '../../../../domain/routing/repositories/routing_repository.dart';
 import 'astar_router.dart';
-
-class AdaptiveSearchResult {
-  final Map<String, dynamic>? winnerPoint;
-  final RouteResult? winnerRoute;
-  final Map<String, dynamic>? haversineWinnerPoint;
-  final double haversineWinnerHaversineDistance;
-  final double haversineWinnerRouteDistance;
-  final int candidatesRoutedCount;
-  final int totalCandidatesCount;
-  final double stoppingHaversineDistance;
-  final double totalSearchTimeMs;
-
-  const AdaptiveSearchResult({
-    required this.winnerPoint,
-    required this.winnerRoute,
-    required this.haversineWinnerPoint,
-    required this.haversineWinnerHaversineDistance,
-    required this.haversineWinnerRouteDistance,
-    required this.candidatesRoutedCount,
-    required this.totalCandidatesCount,
-    required this.stoppingHaversineDistance,
-    required this.totalSearchTimeMs,
-  });
-
-  bool get hasDivergence {
-    if (winnerPoint == null || haversineWinnerPoint == null) return false;
-    return winnerPoint!['water_point_id'] !=
-        haversineWinnerPoint!['water_point_id'];
-  }
-
-  double get savingsMeters {
-    if (!hasDivergence ||
-        haversineWinnerRouteDistance.isInfinite ||
-        winnerRoute == null) {
-      return 0.0;
-    }
-    return haversineWinnerRouteDistance - winnerRoute!.distanceMeters;
-  }
-}
+import 'edge_spatial_grid.dart';
 
 class AdaptiveWaterPointSearch {
   final AstarRouter router;

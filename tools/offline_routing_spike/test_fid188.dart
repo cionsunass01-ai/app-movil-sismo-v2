@@ -1,8 +1,8 @@
 
 // ignore_for_file: avoid_print
 import 'dart:io';
-import 'package:aguacion_app/poc/offline_navigation/graph/csr_graph.dart';
-import 'package:aguacion_app/poc/offline_navigation/spatial/edge_spatial_grid.dart';
+import 'package:aguacion_app/data/sources/local/routing/csr_graph.dart';
+import 'package:aguacion_app/data/sources/local/routing/edge_spatial_grid.dart';
 
 void main() async {
   final binFile = File('tools/offline_routing_spike/pedestrian_graph_lima_csr.bin');

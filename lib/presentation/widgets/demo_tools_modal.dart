@@ -79,7 +79,7 @@ class _DemoToolsModalState extends State<DemoToolsModal> {
                       ),
                       SizedBox(width: 8),
                       Text(
-                        "Herramientas de Demostración",
+                        "Diagnóstico del Sistema",
                         style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.w800,
@@ -98,7 +98,7 @@ class _DemoToolsModalState extends State<DemoToolsModal> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Text(
-                      "DEMO ONLY",
+                      "DIAGNÓSTICO",
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
@@ -111,16 +111,16 @@ class _DemoToolsModalState extends State<DemoToolsModal> {
               ),
               const SizedBox(height: 6),
               const Text(
-                "Controles técnicos para presentaciones ejecutivas y validación de escenarios.",
+                "Panel técnico de telemetría, validación de resiliencia y verificación de almacenamiento offline.",
                 style: TextStyle(fontSize: 12, color: AppColors.slate500),
               ),
               const SizedBox(height: 16),
               const Divider(),
               const SizedBox(height: 10),
 
-              // 1. Simulación de Emergencia
+              // 1. Protocolo de Contingencia
               const Text(
-                "SIMULACIÓN DE ESCENARIO",
+                "ESTADO OPERATIVO Y CONTINGENCIA",
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w800,
@@ -137,7 +137,7 @@ class _DemoToolsModalState extends State<DemoToolsModal> {
                 ),
                 child: SwitchListTile.adaptive(
                   title: const Text(
-                    "Simulación de Emergencia Sísmica",
+                    "Activar Protocolo de Contingencia Sísmica",
                     style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w700,
@@ -169,7 +169,7 @@ class _DemoToolsModalState extends State<DemoToolsModal> {
                   children: [
                     SwitchListTile.adaptive(
                       title: const Text(
-                        "Sobreescribir conectividad (Simulación)",
+                        "Control manual de conectividad (Auditoría)",
                         style: TextStyle(
                           fontSize: 13.5,
                           fontWeight: FontWeight.w700,
@@ -177,7 +177,7 @@ class _DemoToolsModalState extends State<DemoToolsModal> {
                       ),
                       subtitle: Text(
                         state.isConnectivitySimulationEnabled
-                            ? "Simulación activa: se anula la lectura de la red física"
+                            ? "Control manual activo: se fuerza el estado de red física"
                             : "Desactivada: la app refleja la red física real (Wi-Fi / Datos)",
                         style: TextStyle(
                           fontSize: 11.5,
@@ -421,22 +421,33 @@ class _DiagRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 11.5, color: AppColors.slate600),
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 11.5,
-            fontWeight: FontWeight.w700,
-            color: AppColors.slate900,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2.5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 4,
+            child: Text(
+              label,
+              style: const TextStyle(fontSize: 11, color: AppColors.slate600),
+            ),
           ),
-        ),
-      ],
+          const SizedBox(width: 8),
+          Expanded(
+            flex: 5,
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: AppColors.slate900,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

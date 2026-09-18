@@ -7,6 +7,7 @@ import 'package:aguacion_app/presentation/providers/app_state_provider.dart';
 import 'package:aguacion_app/presentation/screens/home/inicio_tab.dart';
 import 'package:aguacion_app/presentation/screens/more/more_tab.dart';
 import 'package:aguacion_app/presentation/screens/points/points_tab.dart';
+import 'package:aguacion_app/presentation/screens/safe_water/safe_water_tab.dart';
 import 'package:aguacion_app/presentation/screens/main_screen.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -112,6 +113,23 @@ void main() {
       );
 
       testWidgets(
+        'SafeWaterTab renders cleanly at ${size.width.toInt()}x${size.height.toInt()} with zero overflow',
+        (tester) async {
+          tester.view.physicalSize = Size(size.width * 2, size.height * 2);
+          tester.view.devicePixelRatio = 2.0;
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+
+          await tester.pumpWidget(createSizedBoxApp(const SafeWaterTab(), size));
+          await tester.pumpAndSettle();
+
+          expect(tester.takeException(), isNull);
+          expect(find.text('Calculadora de Reserva Familiar'), findsOneWidget);
+          expect(find.text('Desinfección Segura con Lejía'), findsOneWidget);
+        },
+      );
+
+      testWidgets(
         'MainScreen renders full chrome at ${size.width.toInt()}x${size.height.toInt()} with zero overflow',
         (tester) async {
           tester.view.physicalSize = Size(size.width * 2, size.height * 2);
@@ -120,7 +138,7 @@ void main() {
           addTearDown(tester.view.resetDevicePixelRatio);
 
           await tester.pumpWidget(createSizedBoxApp(const MainScreen(), size));
-          await tester.pumpAndSettle();
+          await tester.pump(const Duration(milliseconds: 200));
 
           expect(tester.takeException(), isNull);
           expect(find.text('AguaCION'), findsOneWidget);

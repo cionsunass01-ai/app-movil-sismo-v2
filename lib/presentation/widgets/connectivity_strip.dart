@@ -69,7 +69,7 @@ class ConnectivityStrip extends StatelessWidget {
                       border: Border.all(color: AppColors.borderAmber),
                     ),
                     child: const Text(
-                      "DEMO",
+                      "MANUAL",
                       style: TextStyle(
                         fontSize: 8.5,
                         fontWeight: FontWeight.w900,

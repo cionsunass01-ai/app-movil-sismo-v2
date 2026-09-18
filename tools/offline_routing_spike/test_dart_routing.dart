@@ -1,10 +1,10 @@
 // ignore_for_file: avoid_print
 import 'dart:convert';
 import 'dart:io';
-import 'package:aguacion_app/poc/offline_navigation/graph/csr_graph.dart';
-import 'package:aguacion_app/poc/offline_navigation/spatial/edge_spatial_grid.dart';
-import 'package:aguacion_app/poc/offline_navigation/routing/astar_router.dart';
-import 'package:aguacion_app/poc/offline_navigation/benchmarks/dart_routing_benchmark.dart';
+import 'package:aguacion_app/data/sources/local/routing/csr_graph.dart';
+import 'package:aguacion_app/data/sources/local/routing/edge_spatial_grid.dart';
+import 'package:aguacion_app/data/sources/local/routing/astar_router.dart';
+import 'package:aguacion_app/data/sources/local/routing/dart_routing_benchmark.dart';
 
 void main() async {
   print('===============================================================');
