@@ -112,8 +112,8 @@ class PmtilesManager {
 
     if (kIsWeb) {
       // In Flutter Web, assets are served from the /assets/ directory
-      styleMap['sources']['lima_callao']['url'] = 'pmtiles://$assetPmtilesPath';
-      styleMap['glyphs'] = 'assets/poc/fonts/{fontstack}/{range}.pbf';
+      styleMap['sources']['lima_callao']['url'] = 'pmtiles://assets/$assetPmtilesPath';
+      styleMap['glyphs'] = 'assets/assets/poc/fonts/{fontstack}/{range}.pbf';
     } else {
       final pmtilesFile = await prepareLocalPmtiles();
       final fontsDir = await prepareLocalFonts();
