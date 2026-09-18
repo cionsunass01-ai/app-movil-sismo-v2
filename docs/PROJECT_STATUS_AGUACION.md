@@ -1,12 +1,14 @@
 # AguaCION / Agua Segura Perú
-## Estado Actual del Proyecto (Versión 3.0 — Consolidada Post-Hito 3A)
+## Estado Actual del Proyecto (Versión 3.5 — Consolidada: Nativo + PWA Offline-First)
 
 **Contexto institucional:** Superintendencia Nacional de Servicios de Saneamiento (SUNASS)
 **Proyecto:** AguaCION / Agua Segura Perú
-**Fecha del Reporte:** 11 de septiembre de 2026
+**Fecha del Reporte:** 18 de septiembre de 2026
 **Estado del Repositorio:** Suite de pruebas automatizadas en verde (`32/32 tests pass`), análisis estático sin advertencias (`flutter analyze 0 issues`), cero dependencias remotas
-**Último Hito Completado:** Hito 3A — Modelo Operacional de Puntos de Abastecimiento (`REVISIÓN CORRECTIVA COMPLETADA`)
-**Nivel de Madurez:** Modelo de Dominio Operacional Puro Implementado + Núcleo Tecnológico Offline Validado Físicamente en Android (Samsung S24) e iOS (Apple iPhone)
+**Últimos Hitos Completados:**
+- Hito 3A — Modelo Operacional de Puntos de Abastecimiento (`COMPLETADO`)
+- Hito PWA Offline-First — Adaptador IndexedDB `LocalBlobSource`, Service Worker `sw.js` y Despliegue en GitHub Pages (`VALIDADO EN DISPOSITIVO FÍSICO EN MODO AVIÓN`)
+**Nivel de Madurez:** Modelo de Dominio Operacional Puro Implementado + Núcleo Tecnológico Offline Validado Físicamente en Android (Samsung S24), iOS (Apple iPhone) y PWA Web (GitHub Pages).
 
 ---
 
@@ -23,7 +25,9 @@ Hasta la fecha se han alcanzado los siguientes hitos de ingeniería:
 4. **Motor de Enrutamiento Peatonal Propio:** Algoritmo $A^*$ monodireccional / forward implementado en Dart sobre un grafo binario comprimido (formato propietario `AGUACSR1` de 855,857 nodos y 1,990,320 aristas dirigidas), con precisión submétrica mediante enteros Int32 en microgrados (error de quantización máximo de 7.5 cm).
 5. **Búsqueda Adaptativa y Snapping Continuo:** Algoritmo `AdaptiveWaterPointSearch` que garantiza encontrar la infraestructura más conveniente a pie reduciendo en más de 98% las evaluaciones computacionales frente a la búsqueda exhaustiva.
 6. **Auditoría de Acceso Peatonal (Hito 2D):** Inspección individual de los 25 puntos que al umbral base de 50 metros arrojaban `SNAP_NOT_FOUND`, comprobando que 18 de ellos (72.0%) se conectan limpiamente a 100 metros y formalizando el modelo conceptual `WaterPointAccess` con cero coordenadas inventadas.
-7. **Validación Multiplataforma:** Validación física en hardware Android real (Samsung Galaxy S24, Android 16) con mediana de cálculo de 1.72 ms en modo Profile sin red, y generación exitosa del paquete nativo de release para iOS (`Runner.app`, 89.3 MB) con MapLibre compilado sobre Metal.
+7. **Validación Multiplataforma Nativa:** Validación física en hardware Android real (Samsung Galaxy S24, Android 16) con mediana de cálculo de 1.72 ms en modo Profile sin red, y generación exitosa del paquete nativo de release para iOS (`Runner.app`, 89.3 MB) con MapLibre compilado sobre Metal.
+8. **Arquitectura e Implementación PWA Offline-First:** Desarrollo del adaptador `pmtiles_offline.js` basado en `LocalBlobSource` e IndexedDB, resolviendo la incompatibilidad de solicitudes HTTP Range en Service Workers y permitiendo la visualización y navegación del mapa vectorial al 100% en Modo Avión desde navegadores móviles (desplegado públicamente en [GitHub Pages](https://cionsunass01-ai.github.io/app-movil-sismo-v2/)).
+9. **Experiencia de Usuario Institucional:** Incorporación del diálogo pedagógico de ubicación (`LocationPermissionModal`), asistente de instalación PWA (`PwaInstallPromptModal`), componente de onboarding de precarga cartográfica con barra de progreso SVG (sin emojis) y avisos transparentes de 48 horas para la activación operativa de redes post-desastre.
 
 Es indispensable enfatizar que el proyecto se encuentra en estado de **Proof of Concept (POC) Técnico Endurecido**. No es un producto final de distribución pública ni cuenta aún con capas de sincronización en la nube, crowdsourcing ciudadano ni disponibilidad dinámica de agua en tiempo real.
 

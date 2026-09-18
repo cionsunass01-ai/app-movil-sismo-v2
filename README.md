@@ -1,103 +1,135 @@
-# AguaCION
+# AguaCION — Agua Segura Perú
 
-Aplicación móvil Flutter orientada a navegación offline hacia puntos de abastecimiento de agua durante escenarios de emergencia.
+**Plataforma Móvil y PWA de Misión Crítica para Navegación Offline hacia Puntos Oficiales de Abastecimiento de Agua en Lima y Callao ante Sismos de Gran Magnitud.**
+
+[![Flutter Version](https://img.shields.io/badge/Flutter-3.47.2-02569B?logo=flutter)](https://flutter.dev)
+[![Dart Version](https://img.shields.io/badge/Dart-3.13.2-0175C2?logo=dart)](https://dart.dev)
+[![PWA Live](https://img.shields.io/badge/PWA-Online%20%26%20Offline%20Ready-10b981?logo=pwa)](https://cionsunass01-ai.github.io/app-movil-sismo-v2/)
+[![Zero External Dependencies](https://img.shields.io/badge/Network%20Calls-0%20(Offline%20Mode)-blue)](#)
+[![Tests Passing](https://img.shields.io/badge/Tests-32%2F32%20Passing-success)](#)
 
 ---
 
 ## 🏛️ Contexto Institucional
 
-**Contexto institucional: SUNASS**
-*(Superintendencia Nacional de Servicios de Saneamiento)*
+**Contexto institucional: SUNASS** *(Superintendencia Nacional de Servicios de Saneamiento)*
 
 > [!NOTE]
-> Este repositorio constituye un desarrollo técnico y prototipo funcional en el marco de la Gestión del Riesgo de Desastres (GRD). No debe considerarse una aplicación oficial ni producto oficial de SUNASS sin autorización institucional expresa.
+> Este desarrollo técnico y prototipo funcional se enmarca en la Gestión del Riesgo de Desastres (GRD). Los datos de puntos de abastecimiento provienen de los informes remitidos por SEDAPAL a SUNASS en el marco de las acciones de fiscalización y supervisión.
 
 ---
 
-## 📊 Estado del Proyecto
+## 🌐 Aplicación Web Progresiva (PWA en Producción)
 
-* **Hito 1** — Auditoría y normalización de datos oficiales: **COMPLETE**
-* **Hito 2A** — Arquitectura offline: **COMPLETE**
-* **Hito 2B** — POC Flutter offline: **COMPLETE**
-* **Hito 2C** — Validación física Android: **COMPLETE**
-* **Hito 2D** — Etiquetas offline, auditoría de accesos y validación física iOS: **COMPLETE**
-* **Hito 3A** — Modelo operacional de puntos de abastecimiento: **COMPLETE**
-* **Hito 3B** — Motor de recomendaciones operacionales: **NOT STARTED**
+La aplicación se encuentra desplegada y disponible para su uso público en:
 
----
+🔗 **[https://cionsunass01-ai.github.io/app-movil-sismo-v2/](https://cionsunass01-ai.github.io/app-movil-sismo-v2/)**
 
-## 🚀 Capacidades Técnicas
-
-* **Mapas vectoriales offline:** Renderizado cartográfico local mediante MapLibre Native con teselas vectoriales PMTiles y estilos geométricos locales.
-* **Tipografías y glifos locales:** Atlas tipográfico PBF offline embebido (Noto Sans) con soporte completo para diacríticos y caracteres en español.
-* **GNSS / ubicación en dispositivo:** Adquisición de posición satelital por hardware (`geolocator`) en primer plano, con medición de precisión métrica y tolerancia a cold-start.
-* **Grafo peatonal offline (CSR):** Representación binaria comprimida *Compressed Sparse Row* de la red vial peatonal (Lima y Callao) optimizada para buffers contiguos `TypedData` (`Float64List` / `Int32List`).
-* **Snapping conservador:** Vinculación espacial en O(1) vía `EdgeSpatialGrid` con umbral conservador de 50 metros.
-* **Motor de búsqueda y ruteo A\*:** Cálculo de camino más corto peatonal en memoria con heurística geodésica Haversine.
-* **Búsqueda adaptativa (`AdaptiveWaterPointSearch`):** Poda espacial inteligente que evalúa únicamente los candidatos viables según cota geodésica antes de ejecutar A\*.
-* **Bloqueo dinámico de aristas:** Simulación y desvío de rutas ante interrupciones de vías o colapsos peatonales.
-* **Cálculo de rutas peatonales:** Generación de ruta peatonal calculada según la información cartográfica y el grafo disponible, con estimación de distancia y tiempo a pie (~4 km/h).
-* **Validación física en Android:** Demostrado en dispositivo físico (Samsung Galaxy S24) con cold-start sub-segundo y telemetría de ruteo <15 ms.
-* **Validación física en iOS:** Demostrado en iPhone físico (iOS 18) con visualización de polilíneas, snapping a 50 m y estabilidad de memoria footprint.
-* **Modelo operacional desacoplado:** Separación estricta entre la identidad estática de la infraestructura y el estado operativo dinámico, sin TTLs inventados ni umbrales rígidos no autorizados.
+### ¿Cómo probar el funcionamiento 100% Offline en tu celular?
+1. Abre el enlace en tu navegador móvil (Google Chrome en Android o Safari en iOS).
+2. Espera a que la tarjeta de **Precarga de Cartografía Offline** descargue y guarde el mapa de Lima (10.6 MB) en la memoria interna del teléfono mediante IndexedDB (verás la barra de progreso fluida de 0% a 100%).
+3. **Instala la PWA** tocando "Instalar" o mediante "Agregar a la pantalla de inicio".
+4. **Activa el Modo Avión** en tu celular (desconectando Wi-Fi y datos móviles).
+5. Abre la aplicación desde tu pantalla de inicio: **el mapa vectorial completo (calles, avenidas, ríos, distritos y puntos de agua) cargará y responderá de forma inmediata y 100% desconectada**.
 
 ---
 
-## 📦 Offline Assets y Datasets
+## 🚀 Capacidades y Logros Técnicos
 
-Determinados datasets y binarios pesados offline no están incluidos directamente en este repositorio público mientras se define y aprueba institucionalmente su mecanismo de distribución y autorización oficial:
-
-* **Mapa vectorial Lima-Callao (`.pmtiles`):** ~10.17 MB.
-* **Grafo peatonal binario CSR (`.bin`):** ~30.67 MB.
-* **Datasets de puntos normalizados oficiales (`.json`, `.csv`):** En proceso de revisión de publicación institucional (`PENDING_INSTITUTIONAL_APPROVAL`).
-
-Para entornos de prueba y desarrollo local, estos artefactos pueden generarse o incorporarse en el directorio `assets/poc/` según los scripts reproducibles provistos en `tools/`.
+* **Cartografía Vectorial 100% Desconectada:** Renderizado por aceleración de hardware (WebGL en Web / Metal en iOS / Vulkan en Android) utilizando MapLibre y teselas vectoriales PMTiles (Zoom 0 a 14) de Lima Metropolitana y Callao.
+* **Adaptador `LocalBlobSource` e IndexedDB en PWA:** Resuelve la incompatibilidad del estándar Cache API con peticiones de rango HTTP parciales (`206 Partial Content`), permitiendo que el navegador lea los tiles directamente de memoria local con cero llamadas de red en Modo Avión.
+* **Almacenamiento Duradero:** Solicita persistencia de cuota en el navegador mediante `navigator.storage.persist()` para prevenir la purga automática por parte del sistema operativo en dispositivos con poco espacio.
+* **Service Worker `sw.js` (Cache-First):** Pre-cachea el cascarón de la app, el motor CanvasKit, librerías locales, tipografías y datos oficiales.
+* **Glifos Tipográficos Offline:** Atlas local PBF (`Noto Sans Regular` y `Noto Sans Bold`) para rotulación de calles con soporte completo de caracteres y diacríticos en español.
+* **Grafo Peatonal Binario `AGUACSR1`:** Estructura en Memoria Comprimida por Filas (*Compressed Sparse Row*) que almacena 855,857 nodos y 1,990,320 aristas caminables con precisión submétrica (enteros Int32 en microgrados).
+* **Algoritmo de Snapping en O(1):** Indexación espacial mediante cuadrícula de 275 metros (`EdgeSpatialGrid`) que proyecta al usuario a la red caminable más cercana.
+* **Motor de Ruteo A\* Forward con Búsqueda Adaptativa:** `AdaptiveWaterPointSearch` calcula la ruta más corta a pie evaluando solo puntos geodésicamente plausibles, resolviendo rutas complejas en menos de 5 milisegundos.
+* **Bloqueo Dinámico de Vías Colapsadas:** Permite al ciudadano reportar escombros o calles intransitables para recalcular un desvío alternativo de inmediato en memoria.
+* **UX/UI Institucional de Nivel Estado:**
+  - **Onboarding de Precarga Cartográfica:** Barra de progreso fluida de 0% a 100%, tipografía tabular e iconografía vectorial SVG (cero emojis informales).
+  - **Modal Pedagógico de Ubicación (`LocationPermissionModal`):** Explica que la lectura GPS se procesa estrictamente en el dispositivo antes de invocar los permisos del sistema.
+  - **Avisos Operacionales de 48 Horas:** Disclaimers transparentes que recuerdan que tras un sismo mayor, la confirmación física y presurización de las redes puede demorar hasta 48 horas mientras SEDAPAL inspecciona la infraestructura.
 
 ---
 
-## 📱 Estructura del Proyecto
+## 📱 Estructura del Código Fuente
 
 ```text
 lib/
-├── core/                  # Constantes, tokens de diseño y servicios de ubicación
-├── data/                  # Repositorios y modelos base de la aplicación
-├── domain/                # Hito 3A: Modelo operacional de dominio desacoplado
-│   ├── audit/             # Registro de eventos operacionales
-│   ├── incident/          # Bloqueos de aristas e incidencias
-│   ├── metadata/          # Versión y metadatos de datasets
-│   ├── recommendation/    # Modelos de candidatos y resultados de recomendación
-│   ├── reporting/         # Reportes ciudadanos y outbox idempotente
-│   ├── source/            # Confianza, frescura y políticas configurables
-│   └── water/             # Puntos de abastecimiento y estado operativo
-├── poc/                   # Hitos 2A-2D: Motor de navegación y mapas offline
-│   └── offline_navigation/
-│       ├── graph/         # Grafo CSR en memoria y buffers binarios
-│       ├── presentation/  # UI del POC interactivo en MapLibre
-│       ├── routing/       # Algoritmo A* y AdaptiveWaterPointSearch
-│       ├── services/      # Servidor PMTiles local y servicio GNSS
-│       └── spatial/       # Indexación espacial en grilla O(1)
-└── presentation/          # Vistas, pantallas y widgets de la aplicación
+├── core/                  # Constantes, paleta institucional SUNASS y utilidades geodésicas
+├── data/                  # Repositorios y normalización de los 433 puntos oficiales
+├── domain/                # Entidades y reglas del modelo operacional desconectado
+│   ├── audit/             # Trazabilidad y auditoría de eventos
+│   ├── incident/          # Modelado de vías bloqueadas y escombros
+│   ├── metadata/          # Versión y metadatos de los datasets
+│   ├── recommendation/    # Modelos de selección de puntos viables
+│   ├── reporting/         # Reportes ciudadanos locales (outbox idempotente)
+│   ├── source/            # Confianza, frescura y fuentes oficiales
+│   └── water/             # Estado de infraestructura y puntos de abastecimiento
+├── presentation/          # Vistas de usuario, pestañas (IndexedStack) y modales
+└── poc/                   # Motor de navegación offline
+    └── offline_navigation/
+        ├── graph/         # Grafo CSR en memoria y buffers binarios
+        ├── models/        # Estructuras de datos para A* y snapping
+        ├── presentation/  # Visor interactivo y telemetría de rendimiento
+        ├── routing/       # Algoritmo A* y AdaptiveWaterPointSearch
+        ├── services/      # Gestor PMTiles, servicio GNSS y adaptadores web
+        └── spatial/       # Indexación espacial en grilla O(1)
+web/
+├── index.html             # Cascarón PWA con meta-tags iOS/Android y enlace de scripts locales
+├── manifest.json          # Manifiesto PWA con nombres institucionales e iconos
+├── maplibre-gl.js / .css  # Motor cartográfico local (sin dependencias de CDN externos)
+├── pmtiles.js             # Librería base para el formato PMTiles
+├── pmtiles_offline.js     # Adaptador IndexedDB LocalBlobSource y Onboarding SVG
+└── sw.js                  # Service Worker Cache-First para soporte 100% desconectado
 ```
 
 ---
 
-## 🧪 Pruebas Automatizadas
+## 🛠️ Comandos de Desarrollo y Compilación
 
-Para validar la integridad del código, análisis estático y la suite completa de pruebas:
+### Requisitos Previos
+* Flutter SDK $\ge 3.24.0$ (recomendado 3.47.2 o superior)
+* Dart SDK $\ge 3.12.0$
 
+### 1. Análisis de Calidad y Pruebas Unitarias
 ```bash
-# 1. Obtener dependencias
+# Obtener dependencias
 flutter pub get
 
-# 2. Análisis estático (linter)
+# Análisis estático sin advertencias (linter)
 flutter analyze
 
-# 3. Ejecutar suite de pruebas unitarias y de integración
+# Ejecutar suite de pruebas unitarias
 flutter test
 ```
 
+### 2. Compilación y Despliegue Web (PWA)
+```bash
+# Compilar en modo release con base-href para GitHub Pages
+flutter build web --base-href "/app-movil-sismo-v2/" --release
+
+# Configurar worker offline
+Copy-Item -Force build\web\sw.js build\web\flutter_service_worker.js
+New-Item -ItemType File -Force -Path build\web\.nojekyll
+```
+
+### 3. Compilación Móvil Nativa
+```bash
+# Para Android (APK independiente)
+flutter build apk --release
+
+# Para iOS (Requiere macOS y Xcode)
+flutter build ios --release --no-codesign
+```
+
 ---
 
-## 📄 Licencia
+## 📚 Documentación Técnica Detallada
 
-Código desarrollado para propósitos humanitarios y de gestión del riesgo de desastres ante sismos y emergencias en el Perú.
+Para una comprensión exhaustiva de la arquitectura y decisiones de diseño, consulta:
+* [Diseño de Arquitectura](documentacion/Diseño_de_Arquitectura.md)
+* [Evaluación de Factibilidad PWA](documentacion/Evaluacion_Factibilidad_PWA.md)
+* [Flujogramas de Operación](documentacion/Flujograma.md)
+* [Estado Consolidado del Proyecto](docs/PROJECT_STATUS_AGUACION.md)
+* [Especificaciones de Términos de Referencia (TDR)](docs/TDR.md)
